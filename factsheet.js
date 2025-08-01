@@ -232,8 +232,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     const value = sheet["India"]?.[year] || null;
     dataCount.textContent =
       value !== null
-        ? chartId === "nominalGdpChart" || chartId === "gdpPerCapita"
-          ? `$${value.toFixed(2)}${unit}`
+        ? chartId === "nominalGdpChart"
+          ? `${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${unit}`
+          : chartId === "gdpPerCapita"
+          ? `${value.toFixed(2)}${unit}`
           : chartId === "populationChart"
           ? `${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${unit}`
           : `${value.toFixed(2)}${unit}`
@@ -307,8 +309,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
             ${w.globals.seriesNames[seriesIndex]}: ${
           value !== null
-            ? (w.config.chart.id.includes("nominalGdpChart") ||
-              w.config.chart.id.includes("gdpPerCapita")
+            ? (w.config.chart.id.includes("nominalGdpChart")
+                ? value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                : w.config.chart.id.includes("gdpPerCapita")
                 ? "$" + value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 : value.toFixed(2)) + unit
             : "N/A"
@@ -454,8 +457,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           const year = getAnnotationYear(years, nominalGdpSheet);
           return opts.w.globals.labels[opts.dataPointIndex] === year
             ? val !== null
-              ? "$" +
-                val.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+              ? val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
                 " Bn"
               : "N/A"
             : "";
@@ -491,8 +493,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 radius: 2,
               },
               label: {
-                text: `${year}\n$${(nominalGdpSheet["India"]?.[year] || 0)
-                  .toFixed(0)
+                text: `${year}
+${(nominalGdpSheet["India"]?.[year] || 0)
+                  .toFixed(2)
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Bn`,
                 position: "top",
                 offsetY: -15,
@@ -509,8 +512,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       },
     },
     nominalGdpSheet["India"]?.["2025"]
-      ? `$${nominalGdpSheet["India"]["2025"]
-          .toFixed(0)
+      ? `${nominalGdpSheet["India"]["2025"]
+          .toFixed(2)
           .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Bn 2025 Estimate`
       : "Data not available"
   );
@@ -1409,8 +1412,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
               ${w.globals.seriesNames[seriesIndex]}: ${
               value !== null
-                ? "$" +
-                  value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                ? value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
                   " Bn"
                 : "N/A"
             }
