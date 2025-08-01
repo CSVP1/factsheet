@@ -146,6 +146,28 @@ document.addEventListener("DOMContentLoaded", async function () {
     ];
   };
 
+  const DollarCurrencyFormatter = new Intl.NumberFormat("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    style: "currency",
+    currency: "USD",
+  });
+  const DollarZeroCurrencyFormatter = new Intl.NumberFormat("en-IN", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+    style: "currency",
+    currency: "USD",
+  });
+
+  const Formatter = new Intl.NumberFormat("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  const FormatterWithZero = new Intl.NumberFormat("en-IN", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+
   const createShareAISSeries = (sheet, years) => {
     return [
       {
@@ -230,15 +252,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
     const year = "2025";
     const value = sheet["India"]?.[year] || null;
+
     dataCount.textContent =
       value !== null
-        ? chartId === "nominalGdpChart"
-          ? `${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${unit}`
-          : chartId === "gdpPerCapita"
-          ? `${value.toFixed(2)}${unit}`
+        ? chartId === "nominalGdpChart" || chartId === "gdpPerCapita"
+          ? `${DollarCurrencyFormatter.format(value)} ${unit}`
           : chartId === "populationChart"
-          ? `${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${unit}`
-          : `${value.toFixed(2)}${unit}`
+          ? `${Formatter.format(value)} ${unit}`
+          : // ? `${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${unit}`
+            `${Formatter.format(value)} ${unit}`
         : "N/A";
     estimateText.textContent =
       value !== null ? `${year} Estimate` : "Data not available";
@@ -309,10 +331,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
             ${w.globals.seriesNames[seriesIndex]}: ${
           value !== null
-            ? (w.config.chart.id.includes("nominalGdpChart")
-                ? value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                : w.config.chart.id.includes("gdpPerCapita")
-                ? "$" + value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            ? (w.config.chart.id.includes("nominalGdpChart") ||
+              w.config.chart.id.includes("gdpPerCapita")
+                ? // ? "$" + value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  DollarZeroCurrencyFormatter.format(value)
                 : value.toFixed(2)) + unit
             : "N/A"
         }
@@ -457,8 +479,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           const year = getAnnotationYear(years, nominalGdpSheet);
           return opts.w.globals.labels[opts.dataPointIndex] === year
             ? val !== null
-              ? val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-                " Bn"
+              ? //  "$" +
+                //   val.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                //   " Bn"
+                DollarZeroCurrencyFormatter.format(val) + " Bn"
               : "N/A"
             : "";
         },
@@ -493,10 +517,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                 radius: 2,
               },
               label: {
-                text: `${year}
-${(nominalGdpSheet["India"]?.[year] || 0)
-                  .toFixed(2)
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Bn`,
+                // text: `${year}\n$${(nominalGdpSheet["India"]?.[year] || 0)
+                //   .toFixed(0)
+                //   .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Bn`,
+                text: `${year}\n${DollarZeroCurrencyFormatter.format(
+                  nominalGdpSheet["India"]?.[year] || 0
+                )} Bn`,
                 position: "top",
                 offsetY: -15,
                 style: {
@@ -512,9 +538,12 @@ ${(nominalGdpSheet["India"]?.[year] || 0)
       },
     },
     nominalGdpSheet["India"]?.["2025"]
-      ? `${nominalGdpSheet["India"]["2025"]
-          .toFixed(2)
-          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Bn 2025 Estimate`
+      ? // ? `$${nominalGdpSheet["India"]["2025"]
+        //     .toFixed(0)
+        //     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Bn 2025 Estimate`
+        `${DollarZeroCurrencyFormatter.format(
+          nominalGdpSheet["India"]["2025"]
+        )} Bn 2025 Estimate`
       : "Data not available"
   );
 
@@ -701,8 +730,8 @@ ${(nominalGdpSheet["India"]?.[year] || 0)
         min: 0,
         max: 2000,
         labels: {
-          formatter: (val) =>
-            `${val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
+          formatter: (val) => `${Formatter.format(val)} M`,
+          // `${val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
         },
       },
       series: [
@@ -723,9 +752,12 @@ ${(nominalGdpSheet["India"]?.[year] || 0)
                 radius: 2,
               },
               label: {
-                text: `${year}\n${(populationSheet["India"]?.[year] || 0)
-                  .toFixed(2)
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
+                // text: `${year}\n${(populationSheet["India"]?.[year] || 0)
+                //   .toFixed(2)
+                //   .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
+                text: `${year}\n${Formatter.format(
+                  populationSheet["India"]?.[year] || 0
+                )} M`,
                 position: "top",
                 offsetY: -15,
                 style: {
@@ -741,9 +773,10 @@ ${(nominalGdpSheet["India"]?.[year] || 0)
       },
     },
     populationSheet["India"]?.["2025"]
-      ? `${populationSheet["India"]["2025"]
-          .toFixed(2)
-          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M 2025 Estimate`
+      ? // ? `${populationSheet["India"]["2025"]
+        //     .toFixed(2)
+        //     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M 2025 Estimate`
+        `${Formatter.format(populationSheet["India"]["2025"])} M 2025 Estimate`
       : "Data not available"
   );
 
@@ -1412,8 +1445,10 @@ ${(nominalGdpSheet["India"]?.[year] || 0)
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
               ${w.globals.seriesNames[seriesIndex]}: ${
               value !== null
-                ? value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-                  " Bn"
+                ? // ? "$" +
+                  //   value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                  //   " Bn"
+                  DollarZeroCurrencyFormatter.format(value) + " Bn"
                 : "N/A"
             }
             </div>`;
@@ -1586,8 +1621,8 @@ ${(nominalGdpSheet["India"]?.[year] || 0)
           min: 0,
           max: 2000,
           labels: {
-            formatter: (val) =>
-              `${val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
+            formatter: (val) => `${Formatter.format(val)} M`,
+            // `${val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
           },
         },
         grid: {
@@ -1608,10 +1643,15 @@ ${(nominalGdpSheet["India"]?.[year] || 0)
           enabled: true,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
             const value = series[seriesIndex][dataPointIndex];
+            const formatter = new Intl.NumberFormat("en-IN", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
                         ${w.globals.labels[dataPointIndex]}: ${
               value !== null
-                ? value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " M"
+                ? // ? value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " M"
+                  formatter.format(value) + " M"
                 : "N/A"
             }
                     </div>`;
