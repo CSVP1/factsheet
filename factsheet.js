@@ -324,10 +324,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             ? "M"
             : w.config.chart.id.includes("merchandiseChart")
             ? "B"
-            : w.config.chart.id.includes("nominalGdpChart")
+            : w.config.chart.id.includes("nominalGdpChart") // ||  w.config.chart.id.includes("gdpPerCapita")
             ? "Bn"
-            : w.config.chart.id.includes("gdpPerCapita")
-            ? ""
             : "";
         return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
             ${w.globals.seriesNames[seriesIndex]}: ${
