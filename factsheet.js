@@ -2189,9 +2189,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         stroke: {
           curve: "smooth",
           width: 2,
-          dashArray: inflationYears.map((year) =>
-            parseInt(year) >= 2025 ? 5 : 0
-          ),
+          dashArray: 5, // Apply dashed style to all years
+          // dashArray: inflationYears.map((year) =>
+          //   parseInt(year) >= 2025 ? 5 : 0
+          // ),
           fill: {
             type: "gradient",
             gradient: {
@@ -2216,10 +2217,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
             const value = series[seriesIndex][dataPointIndex];
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-                ${w.globals.seriesNames[seriesIndex]}: ${
+              ${w.globals.seriesNames[seriesIndex]}: ${
               value !== null ? value.toFixed(2) + "%" : "N/A"
             }
-              </div>`;
+            </div>`;
           },
         },
         dataLabels: { enabled: false },
