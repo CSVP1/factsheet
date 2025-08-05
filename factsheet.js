@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", async function () {
+  // Entry point: Wait for DOM to be ready before initializing charts
   console.log("Starting chart initialization at", new Date().toISOString());
 
-  // Fallback years for structure (no data values)
+  // Fallback years for structure (used if data is missing for a metric)
   const fallbackYears = [
     "2000",
     "2005",
@@ -15,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const fallbackGrowthYears = ["2021", "2022", "2023", "2024", "2025"];
   const countries = ["India", "China", "United States", "Brazil", "Japan"];
 
-  // Fetch data
+  // Fetch data from remote API (India Fact Sheet)
   let sheets = {};
   try {
     console.log("Fetching data from API...");
@@ -43,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     };
   }
 
-  // Extract sheets
+  // Extract individual sheets from the fetched data, providing empty objects as fallbacks for each metric
   const nominalGdpSheet = sheets["Nominal GDP"] || {};
   const realGdpGrowthSheet = sheets["Real GDP Growth (%)"] || {};
   const gdpPerCapitaSheet = sheets["GDP Per Capita"] || {};
@@ -56,11 +57,12 @@ document.addEventListener("DOMContentLoaded", async function () {
   const shareAISSheet = sheets["Share of A,I,S in GDP"] || {};
   const annualReturnsSheet = sheets["Annual Returns of Major Indices"] || {};
 
-  // Get years for each metric
+  // Helper: Get sorted years for a given metric/country, ensuring at least two years (using fallback if needed)
   const getYears = (sheet, country, fallback) => {
     const years = Object.keys(sheet[country] || {})
-      .filter((year) => !isNaN(year))
+      .filter((year) => !isNaN(year)) // Filter out non-numeric keys
       .sort();
+    // If less than 2 years of data, supplement with fallback years
     return years.length >= 2
       ? years
       : [
@@ -71,6 +73,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         ].sort();
   };
 
+  // Determine the years to be displayed for each chart (per metric)
   const years = getYears(nominalGdpSheet, "India", fallbackYears);
   const realGdpYears = getYears(
     realGdpGrowthSheet,
@@ -109,10 +112,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     annualReturnsYears,
   });
 
-  // Create series data
+  // Helper: Create chart series data from a sheet, for a single country or all countries
   const createSeries = (sheet, years, selectedCountry = null) => {
     if (!sheet || (selectedCountry && !sheet[selectedCountry])) {
-      console.warn(`No data for ${selectedCountry || "countries"} in sheet`);
+      // Warn if data is missing and return null data points
       return selectedCountry
         ? [{ name: selectedCountry, data: years.map(() => null) }]
         : countries.map((country) => ({
@@ -120,6 +123,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             data: years.map((year) => sheet[country]?.[year] || null),
           }));
     }
+    // Map years to data points for the selected country or all countries
     return selectedCountry
       ? [
           {
@@ -133,6 +137,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }));
   };
 
+  // Helper: Create series data for merchandise trade (Exports, Imports, Surplus/Deficit)
   const createMerchandiseSeries = (sheet, years) => {
     const exportsData = years.map((year) => sheet[year]?.Exports || null);
     const importsData = years.map((year) => sheet[year]?.Imports || null);
@@ -146,6 +151,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     ];
   };
 
+  // Formatters for currency and numbers (for chart labels, tooltips, etc.)
   const DollarCurrencyFormatter = new Intl.NumberFormat("en-IN", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -159,6 +165,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     currency: "USD",
   });
 
+  // General number formatters with and without fractional digits
   const Formatter = new Intl.NumberFormat("en-IN", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -168,6 +175,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     maximumFractionDigits: 0,
   });
 
+  // Helper: Create series data for share of Agriculture, Industry, and Services in GDP
   const createShareAISSeries = (sheet, years) => {
     return [
       {
@@ -185,6 +193,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     ];
   };
 
+  // Helper: Create series data for annual returns of major stock indices
   const createAnnualReturnsSeries = (sheet, years) => {
     const indices = Object.keys(sheet || {});
     return indices.map((index) => ({
@@ -193,6 +202,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }));
   };
 
+  // Structure containing all the series data required for the charts (precomputed for rendering)
   const seriesData = {
     nominalGdp: createSeries(nominalGdpSheet, years, "India"),
     nominalGdpAll: createSeries(nominalGdpSheet, years),
@@ -228,18 +238,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       annualReturnsYears
     ),
   };
-  console.log("Series data:", JSON.stringify(seriesData, null, 2));
 
-  // Update info-div with 2025 data
+  // Update the info display for a chart with the latest data for 2025 (or fallback)
   const updateInfoDiv = (chartId, sheet, unit = "") => {
     const container = document.querySelector(`#${chartId}`);
     if (!container) {
-      console.warn(`Chart container #${chartId} not found`);
       return;
     }
     const card = container.closest(".graph-card");
     if (!card) {
-      console.warn(`Graph card for ${chartId} not found`);
       return;
     }
     const dataCount = card.querySelector(".india-data-count");
@@ -253,6 +260,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const year = "2025";
     const value = sheet["India"]?.[year] || null;
 
+    // Format and display the data, or show "N/A" if not available
     dataCount.textContent =
       value !== null
         ? chartId === "nominalGdpChart" || chartId === "gdpPerCapita"
@@ -266,6 +274,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       value !== null ? `${year} Estimate` : "Data not available";
   };
 
+  // Call updateInfoDiv for each chart to display the latest data (2025 or fallback)
   updateInfoDiv("nominalGdpChart", nominalGdpSheet, "Bn");
   updateInfoDiv("realGDPGrowth", realGdpGrowthSheet, "%");
   updateInfoDiv("gdpPerCapita", gdpPerCapitaSheet);
@@ -278,7 +287,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   updateInfoDiv("detailedMedianAge", medianAgeSheet, "years");
   updateInfoDiv("detailedInflationRate", inflationRateSheet, "%");
 
-  // Common chart options
+  // Common ApexCharts options for the main charts (ensures consistent look and feel)
   const commonOptions = {
     chart: { type: "line", height: 150, toolbar: { show: false } },
     xaxis: {
@@ -332,8 +341,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           value !== null
             ? (w.config.chart.id.includes("nominalGdpChart") ||
               w.config.chart.id.includes("gdpPerCapita")
-                ? // ? "$" + value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                  DollarZeroCurrencyFormatter.format(value)
+                ? DollarZeroCurrencyFormatter.format(value)
                 : value.toFixed(2)) + unit
             : "N/A"
         }
@@ -343,7 +351,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     dataLabels: { enabled: false },
   };
 
-  // Common detailed chart options
+  // Common ApexCharts options for the detailed view charts in popups (for 'View More' popups)
   const commonDetailedOptions = {
     chart: { type: "line", height: 400, toolbar: { show: false } },
     xaxis: {
@@ -415,18 +423,17 @@ document.addEventListener("DOMContentLoaded", async function () {
     },
   };
 
-  // Render chart function
+  // Render an ApexChart in a specified container and add an estimate label (2025 or fallback)
   const renderChart = (containerId, options, estimateText) => {
     try {
       const container = document.getElementById(containerId);
       if (!container) {
-        console.error(`Chart container #${containerId} not found`);
         return;
       }
       const chart = new ApexCharts(container, options);
       chart.render();
-      console.log(`Chart ${containerId} rendered successfully`);
 
+      // Add a label for the 2025 estimate to the chart container
       const estimateLabel = document.createElement("div");
       estimateLabel.style.position = "absolute";
       estimateLabel.style.top = "20px";
@@ -436,12 +443,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       estimateLabel.style.fontWeight = "bold";
       estimateLabel.textContent = estimateText;
       container.appendChild(estimateLabel);
-    } catch (err) {
-      console.error(`Failed to render chart ${containerId}:`, err);
-    }
+    } catch (err) {}
   };
 
-  // Helper function to determine annotation year
+  // Helper: Determine the year for annotations (prefer 2025, fallback to 2024)
   const getAnnotationYear = (years, sheet, key = "India") => {
     return years.includes("2025") && sheet[key]?.["2025"] != null
       ? "2025"
@@ -450,7 +455,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       : null;
   };
 
-  // Render charts
+  // Render all main charts (GDP, Growth, Population, etc.)
   renderChart(
     "nominalGdpChart",
     {
@@ -870,7 +875,21 @@ document.addEventListener("DOMContentLoaded", async function () {
       : "Data not available"
   );
 
-  // Update for governmentBondChart to add % to y-axis values
+  // Update for governmentBondChart: add % to y-axis values
+  // Add null data points at start and end for visual padding
+  const paddedBondYears = ["", ...bondYears, " "];
+  const paddedBondData = [
+    {
+      name: "India",
+      data: [
+        null,
+        ...bondYears.map(
+          (year) => governmentBondSheet["India"]?.[year] || null
+        ),
+        null,
+      ],
+    },
+  ];
   renderChart(
     "governmentBondChart",
     {
@@ -881,13 +900,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         type: "line",
         height: 220,
       },
-      xaxis: { ...commonOptions.xaxis, categories: bondYears },
+      xaxis: { ...commonOptions.xaxis, categories: paddedBondYears },
       yaxis: {
         ...commonOptions.yaxis,
+        show: true,
         max: 15,
-        labels: { formatter: (val) => `${val.toFixed(1)}%` },
+        labels: {
+          formatter: (val) => `${val.toFixed(1)}%`,
+          style: { colors: ["#9ca3af"] },
+        },
       },
-      series: seriesData.governmentBond,
+      series: paddedBondData,
       colors: ["#1e40af"],
       annotations: {
         points: (() => {
@@ -895,7 +918,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           if (!year) return [];
           return [
             {
-              x: year,
+              x: paddedBondYears[bondYears.indexOf(year) + 1],
               y: governmentBondSheet["India"]?.[year] || null,
               marker: {
                 size: 6,
@@ -925,14 +948,29 @@ document.addEventListener("DOMContentLoaded", async function () {
       ? `${governmentBondSheet["India"]["2025"].toFixed(2)}% 2025 Estimate`
       : "Data not available"
   );
+  // Add null data points at start and end for visual padding
+  const paddedMerchandiseYears = ["", ...merchandiseYears, " "];
+  const paddedMerchandiseSeries = seriesData.merchandiseTrade.map((s) => ({
+    name: s.name,
+    data: [null, ...s.data, null],
+  }));
   renderChart(
     "MerchandiseChart",
     {
       ...commonOptions,
       chart: { ...commonOptions.chart, id: "merchandiseChart", height: 220 },
-      xaxis: { ...commonOptions.xaxis, categories: merchandiseYears },
-      yaxis: { ...commonOptions.yaxis, min: -500, max: 750 },
-      series: seriesData.merchandiseTrade,
+      xaxis: { ...commonOptions.xaxis, categories: paddedMerchandiseYears },
+      yaxis: {
+        ...commonOptions.yaxis,
+        show: true,
+        min: -500,
+        max: 750,
+        labels: {
+          formatter: (val) => `${val.toFixed(0)}B`,
+          style: { colors: ["#9ca3af"] },
+        },
+      },
+      series: paddedMerchandiseSeries,
       colors: ["#1e40af", "#dc2626", "#65a30d"],
       annotations: {
         points: (() => {
@@ -947,7 +985,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           if (!year) return [];
           return [
             {
-              x: year,
+              x: paddedMerchandiseYears[merchandiseYears.indexOf(year) + 1],
               y: merchandiseTradeSheet[year]?.Exports || null,
               marker: {
                 size: 6,
@@ -1121,7 +1159,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       : "Data not available"
   );
 
-  // Update for annualReturnsChart-nifty to remove legend and set x-axis label to "Nifty graph"
+  // Update for annualReturnsChart-nifty: remove legend and set x-axis label to "Nifty graph"
   renderChart(
     "annualReturnsChart-nifty",
     {
@@ -1289,29 +1327,24 @@ document.addEventListener("DOMContentLoaded", async function () {
       : "Data not available"
   );
 
-  // Setup popup function
+  // Setup popup functionality for a chart (detailed view on 'View More' click)
   const setupPopup = (chartContainerId, detailedOptions, chartId) => {
     try {
       const chartContainer = document.getElementById(chartContainerId);
       if (!chartContainer) {
-        console.error(`Chart container #${chartContainerId} not found`);
         return;
       }
       const card = chartContainer.closest(".graph-card");
       if (!card) {
-        console.error(`Graph card for ${chartId} not found`);
         return;
       }
       const viewMoreBtn = card.querySelector(".view-more-details");
       const popup = card.querySelector(".detailed-graph");
       if (!viewMoreBtn || !popup) {
-        console.error(`Popup elements missing for ${chartId}:`, {
-          viewMoreBtn: !!viewMoreBtn,
-          popup: !!popup,
-        });
         return;
       }
 
+      // Create a close button if it doesn't exist
       let closeBtn = card.querySelector(".close-popup");
       if (!closeBtn) {
         closeBtn = document.createElement("button");
@@ -1333,65 +1366,58 @@ document.addEventListener("DOMContentLoaded", async function () {
         popup.appendChild(closeBtn);
       }
 
+      // Event listener for the "View More" button to open the popup
       viewMoreBtn.removeEventListener("click", handleViewMoreClick);
       viewMoreBtn.addEventListener("click", handleViewMoreClick);
       function handleViewMoreClick(e) {
         e.preventDefault();
-        console.log(`Opening popup for ${chartId}`);
         popup.style.display = "flex";
         const container = document.getElementById(chartId);
         if (!container) {
-          console.error(`Detailed chart container #${chartId} not found`);
           return;
         }
         try {
+          // Destroy existing chart instance before rendering a new one
           const existingChart = ApexCharts.getChartByID(chartId);
           if (existingChart) {
             existingChart.destroy();
-            console.log(`Existing detailed chart ${chartId} destroyed`);
           }
           const detailedChart = new ApexCharts(container, {
             ...detailedOptions,
             chart: { ...detailedOptions.chart, id: chartId },
           });
           detailedChart.render();
-          console.log(`Detailed chart ${chartId} rendered`);
-        } catch (err) {
-          console.error(`Failed to render detailed chart ${chartId}:`, err);
-        }
+        } catch (err) {}
       }
 
+      // Event listener for the close button
       closeBtn.removeEventListener("click", handleCloseClick);
       closeBtn.addEventListener("click", handleCloseClick);
       function handleCloseClick(e) {
         e.preventDefault();
-        console.log(`Closing popup for ${chartId}`);
         popup.style.display = "none";
         const detailedChart = ApexCharts.getChartByID(chartId);
         if (detailedChart) {
           detailedChart.destroy();
-          console.log(`Detailed chart ${chartId} destroyed`);
         }
       }
 
+      // Event listener to close the popup when clicking on the background overlay
       popup.removeEventListener("click", handleBackgroundClick);
       popup.addEventListener("click", handleBackgroundClick);
       function handleBackgroundClick(e) {
         if (e.target === popup) {
-          console.log(`Closing popup for ${chartId} via background click`);
           popup.style.display = "none";
           const detailedChart = ApexCharts.getChartByID(chartId);
           if (detailedChart) {
             detailedChart.destroy();
-            console.log(`Detailed chart ${chartId} destroyed`);
           }
         }
       }
-    } catch (err) {
-      console.error(`Error setting up popup for ${chartId}:`, err);
-    }
+    } catch (err) {}
   };
 
+  // Setup popups for each chart if present in DOM
   if (document.getElementById("nominalGdpChart")) {
     setupPopup(
       "nominalGdpChart",
@@ -1742,7 +1768,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     );
   }
 
-  // Update for detailedGovernmentBondChart to add % to y-axis values
+  // Update for detailedGovernmentBondChart: add % to y-axis values
   if (document.getElementById("governmentBondChart")) {
     setupPopup(
       "governmentBondChart",
