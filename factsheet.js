@@ -697,9 +697,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 radius: 2,
               },
               label: {
-                text: `${year}\n$${(
+                text: `${year}\n${DollarZeroCurrencyFormatter.format(
                   gdpPerCapitaSheet["India"]?.[year] || 0
-                ).toFixed(2)}`,
+                )}`,
                 position: "top",
                 offsetY: -15,
                 style: {
@@ -900,17 +900,25 @@ document.addEventListener("DOMContentLoaded", async function () {
         type: "line",
         height: 220,
       },
-      xaxis: { ...commonOptions.xaxis, categories: paddedBondYears },
+      //    xaxis: { ...commonOptions.xaxis, categories: paddedBondYears },
+      // yaxis: {
+      //   ...commonOptions.yaxis,
+      //   show: true,
+      //   max: 15,
+      //   labels: {
+      //     formatter: (val) => `${val.toFixed(1)}%`,
+      //     style: { colors: ["#9ca3af"] },
+      //   },
+      // },
+      // series: paddedBondData,
+      xaxis: { ...commonOptions.xaxis, categories: bondYears },
       yaxis: {
         ...commonOptions.yaxis,
-        show: true,
+        // show: true,
         max: 15,
-        labels: {
-          formatter: (val) => `${val.toFixed(1)}%`,
-          style: { colors: ["#9ca3af"] },
-        },
+        labels: { formatter: (val) => `${val.toFixed(1)}%` },
       },
-      series: paddedBondData,
+      series: seriesData.governmentBond,
       colors: ["#1e40af"],
       annotations: {
         points: (() => {
@@ -918,7 +926,8 @@ document.addEventListener("DOMContentLoaded", async function () {
           if (!year) return [];
           return [
             {
-              x: paddedBondYears[bondYears.indexOf(year) + 1],
+              //  x: paddedBondYears[bondYears.indexOf(year) + 1],
+              x: year,
               y: governmentBondSheet["India"]?.[year] || null,
               marker: {
                 size: 6,
@@ -959,18 +968,21 @@ document.addEventListener("DOMContentLoaded", async function () {
     {
       ...commonOptions,
       chart: { ...commonOptions.chart, id: "merchandiseChart", height: 220 },
-      xaxis: { ...commonOptions.xaxis, categories: paddedMerchandiseYears },
-      yaxis: {
-        ...commonOptions.yaxis,
-        show: true,
-        min: -500,
-        max: 750,
-        labels: {
-          formatter: (val) => `${val.toFixed(0)}B`,
-          style: { colors: ["#9ca3af"] },
-        },
-      },
-      series: paddedMerchandiseSeries,
+      // xaxis: { ...commonOptions.xaxis, categories: paddedMerchandiseYears },
+      // yaxis: {
+      //   ...commonOptions.yaxis,
+      //   show: true,
+      //   min: -500,
+      //   max: 750,
+      //   labels: {
+      //     formatter: (val) => `${val.toFixed(0)}B`,
+      //     style: { colors: ["#9ca3af"] },
+      //   },
+      // },
+      // series: paddedMerchandiseSeries,
+      xaxis: { ...commonOptions.xaxis, categories: merchandiseYears },
+      yaxis: { ...commonOptions.yaxis, min: -500, max: 750 },
+      series: seriesData.merchandiseTrade,
       colors: ["#1e40af", "#dc2626", "#65a30d"],
       annotations: {
         points: (() => {
@@ -985,7 +997,8 @@ document.addEventListener("DOMContentLoaded", async function () {
           if (!year) return [];
           return [
             {
-              x: paddedMerchandiseYears[merchandiseYears.indexOf(year) + 1],
+              // x: paddedMerchandiseYears[merchandiseYears.indexOf(year) + 1],
+              x: year,
               y: merchandiseTradeSheet[year]?.Exports || null,
               marker: {
                 size: 6,
@@ -1174,7 +1187,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         categories: annualReturnsYears,
         title: { text: "Nifty" },
       },
-      yaxis: { ...commonOptions.yaxis, min: 0, max: 80000 },
+      yaxis: { ...commonOptions.yaxis, min: 0, max: 30000 },
       series: [
         {
           name: "NIFTY",
