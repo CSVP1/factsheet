@@ -382,13 +382,67 @@ document.addEventListener("DOMContentLoaded", function () {
           data.calculated_irr || "0";
         document.getElementById("exitValue").value =
           data.value_of_investment || "0";
+        /*
 
-        const labels = data.data
-          .find((item) => item.table === "Base Adjusted Values")
-          .historicalData.map((item) => {
-            const dateParts = item.date.split("-");
-            return dateParts[2];
+        const startYear = new Date(startDate).getFullYear();
+        const endYear = new Date(endDate).getFullYear();
+
+        // Create a definitive list of year labels for the chart's x-axis.
+        const labels = [];
+        for (let year = startYear; year <= endYear; year++) {
+          labels.push(year.toString());
+        }
+
+        const baseAdjustedSeries = data.data.filter(
+          (item) => item.table === "Base Adjusted Values"
+        );
+
+        const actualValuesMap = {};
+        data.data
+          .filter((item) => item.table === "Actual Values")
+          .forEach((indexData) => {
+            actualValuesMap[indexData.indexName] = indexData.historicalData.map(
+              (item) => ({
+                date: item.date,
+                value: parseFloat(item.value) || 0,
+              })
+            );
           });
+
+        const defaultIndices = ["NASDAQ 100", "NIFTY IT", "BSE IT", "NIFTY"];
+        const initialIndices = [...new Set([index, ...defaultIndices])];
+
+        const datasets = baseAdjustedSeries.map((indexData, i) => {
+          // Create a map of year -> value for the current index.
+          const valueMap = new Map();
+          indexData.historicalData.forEach((item) => {
+            const year = item.date.split("-")[2];
+            valueMap.set(year, parseFloat(item.value) || 0);
+          });
+
+          // Build the dataset's data array against the definitive `labels`.
+          const filteredData = labels.map((year) => valueMap.get(year) ?? null);
+
+          const isSelectedIndex = indexData.indexName === index;
+          return {
+            label: indexData.indexName,
+            data: filteredData,
+*/
+        const baseAdjusted = data.data.find(
+          (item) => item.table === "Base Adjusted Values"
+        );
+        const labels = baseAdjusted.historicalData.map((item) => {
+          const dateParts = item.date.split("-");
+          return dateParts[2];
+        });
+        // Find the exit year from the end date input
+        const endDateInput = document.getElementById("end_date").value;
+        const exitYear = endDateInput.split("/")[2]; // mm/dd/yyyy
+        // Find the first index of the exit year in labels
+        let endIdx = labels.findIndex((year) => year === exitYear);
+        if (endIdx === -1) endIdx = labels.length - 1; // fallback: use all
+        // Slice labels and datasets up to and including the first exit year
+        const displayLabels = labels.slice(0, endIdx + 1);
 
         const actualValuesMap = {};
         data.data
@@ -409,11 +463,14 @@ document.addEventListener("DOMContentLoaded", function () {
           .filter((item) => item.table === "Base Adjusted Values")
           .map((indexData, i) => {
             const isSelectedIndex = indexData.indexName === index;
+            // Slice data to match displayLabels length
+            const dataSlice = indexData.historicalData.slice(
+              0,
+              displayLabels.length
+            );
             return {
               label: indexData.indexName,
-              data: indexData.historicalData.map(
-                (item) => parseFloat(item.value) || 0
-              ),
+              data: dataSlice.map((item) => parseFloat(item.value) || 0),
               borderColor: isSelectedIndex
                 ? "#4FC3F7"
                 : [
@@ -469,7 +526,7 @@ document.addEventListener("DOMContentLoaded", function () {
         chartInstance = new Chart(ctx, {
           type: "line",
           data: {
-            labels: labels,
+            labels: displayLabels,
             datasets: datasets,
           },
           options: {
