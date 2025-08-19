@@ -1448,7 +1448,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           axisTicks: { show: false },
           categories: years,
         },
-        yaxis: { show: true, min: 0 },
+        yaxis: { show: true },
         grid: {
           show: true,
           xaxis: { lines: { show: false } },
@@ -1588,7 +1588,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           axisTicks: { show: false },
           categories: years,
         },
-        yaxis: { show: true, min: 0 },
+        yaxis: { show: true },
         grid: {
           show: true,
           xaxis: { lines: { show: false } },
