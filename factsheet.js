@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   };
 
   // Determine the years to be displayed for each chart (per metric)
-  const years = getYears(nominalGdpSheet, "India", fallbackYears);
+  const years = getYears(nominalGdpSheet?.main, "India", fallbackYears);
   const realGdpYears = getYears(
     realGdpGrowthSheet,
     "India",
@@ -204,12 +204,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Structure containing all the series data required for the charts (precomputed for rendering)
   const seriesData = {
-    nominalGdp: createSeries(nominalGdpSheet, years, "India"),
-    nominalGdpAll: createSeries(nominalGdpSheet, years),
+    nominalGdp: createSeries(nominalGdpSheet?.main, years, "India"),
+    nominalGdpAll: createSeries(nominalGdpSheet?.percentage, years),
     realGdpGrowth: createSeries(realGdpGrowthSheet, realGdpYears, "India"),
     realGdpGrowthAll: createSeries(realGdpGrowthSheet, realGdpYears),
-    gdpPerCapita: createSeries(gdpPerCapitaSheet, years, "India"),
-    gdpPerCapitaAll: createSeries(gdpPerCapitaSheet, years),
+    gdpPerCapita: createSeries(gdpPerCapitaSheet?.main, years, "India"),
+    gdpPerCapitaAll: createSeries(gdpPerCapitaSheet?.percentage, years),
     population: createSeries(populationSheet, populationYears, "India"),
     populationAll: createSeries(populationSheet, populationYears),
     unemploymentRate: createSeries(
@@ -275,9 +275,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   };
 
   // Call updateInfoDiv for each chart to display the latest data (2025 or fallback)
-  updateInfoDiv("nominalGdpChart", nominalGdpSheet, "Bn");
+  updateInfoDiv("nominalGdpChart", nominalGdpSheet?.main, "Bn");
   updateInfoDiv("realGDPGrowth", realGdpGrowthSheet, "%");
-  updateInfoDiv("gdpPerCapita", gdpPerCapitaSheet);
+  updateInfoDiv("gdpPerCapita", gdpPerCapitaSheet?.main);
   updateInfoDiv("populationChart", populationSheet, "M");
   updateInfoDiv("unemploymentRateChart", unemploymentRateSheet, "%");
   updateInfoDiv("governmentBondChart", governmentBondSheet, "%");
@@ -513,7 +513,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           return [
             {
               x: year,
-              y: nominalGdpSheet["India"]?.[year] || null,
+              y: nominalGdpSheet.percentage["India"]?.[year] || null,
               marker: {
                 size: 6,
                 fillColor: "#1e40af",
@@ -525,7 +525,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 //   .toFixed(0)
                 //   .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Bn`,
                 text: `${year}\n${DollarZeroCurrencyFormatter.format(
-                  nominalGdpSheet["India"]?.[year] || 0
+                  nominalGdpSheet?.main["India"]?.[year] || 0
                 )} Bn`,
                 position: "top",
                 offsetY: -15,
@@ -541,12 +541,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         })(),
       },
     },
-    nominalGdpSheet["India"]?.["2025"]
+    nominalGdpSheet?.main["India"]?.["2025"]
       ? // ? `$${nominalGdpSheet["India"]["2025"]
         //     .toFixed(0)
         //     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Bn 2025 Estimate`
         `${DollarZeroCurrencyFormatter.format(
-          nominalGdpSheet["India"]["2025"]
+          nominalGdpSheet?.main["India"]["2025"]
         )} Bn 2025 Estimate`
       : "Data not available"
   );
@@ -714,8 +714,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         })(),
       },
     },
-    gdpPerCapitaSheet["India"]?.["2025"]
-      ? `$${gdpPerCapitaSheet["India"]["2025"].toFixed(2)} 2025 Estimate`
+    gdpPerCapitaSheet.main["India"]?.["2025"]
+      ? `$${gdpPerCapitaSheet.main["India"]["2025"].toFixed(2)} 2025 Estimate`
       : "Data not available"
   );
 
@@ -1486,8 +1486,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 ? // ? "$" +
                   //   value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
                   //   " Bn"
-                  DollarZeroCurrencyFormatter.format(value) + " Bn"
-                : "N/A"
+                  value.toFixed(2) + "%"
+                : // DollarZeroCurrencyFormatter.format(value) + " Bn"
+                  "N/A"
             }
             </div>`;
           },
@@ -1621,7 +1622,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             const value = series[seriesIndex][dataPointIndex];
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
               ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? "$" + value.toFixed(2) : "N/A"
+              value !== null ? value.toFixed(2) + "%" : "N/A"
             }
             </div>`;
           },
