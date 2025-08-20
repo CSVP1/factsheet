@@ -74,7 +74,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   };
 
   // Determine the years to be displayed for each chart (per metric)
-  const years = getYears(nominalGdpSheet?.main, "India", fallbackYears);
+  const years = getYears(nominalGdpSheet?.main, "India", fallbackYears).filter(
+    (year) => year !== "2000"
+);
   const realGdpYears = getYears(
     realGdpGrowthSheet,
     "India",
