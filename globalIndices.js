@@ -557,7 +557,9 @@ document.addEventListener("DOMContentLoaded", function () {
                       document.getElementById("irr-result").value || "0";
                     const exitValue =
                       document.getElementById("exitValue").value || "0";
+
                     return [
+                      "-----------------------",
                       `IRR: ${parseFloat(irrResult).toFixed(2)}%`,
                       `Exit Value: ${parseFloat(exitValue).toFixed(2)}`,
                     ];
