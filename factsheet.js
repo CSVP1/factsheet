@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Determine the years to be displayed for each chart (per metric)
   const years = getYears(nominalGdpSheet?.main, "India", fallbackYears).filter(
     (year) => year !== "2000"
-);
+  );
   const realGdpYears = getYears(
     realGdpGrowthSheet,
     "India",
@@ -1662,7 +1662,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           min: 0,
           max: 2000,
           labels: {
-            formatter: (val) => `${Formatter.format(val)} M`,
+            formatter: (val) => `${Formatter.format(val)}`,
             // `${val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
           },
         },
@@ -2148,7 +2148,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           show: true,
           min: 0,
           max: 60,
-          title: { text: "Age" },
+          title: { text: "Median Age" },
           labels: { formatter: (val) => `${Math.round(val)}` },
         },
         grid: {
@@ -2231,7 +2231,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         stroke: {
           curve: "smooth",
           width: 2,
-          dashArray: 5, // Apply dashed style to all years
+          dashArray: 0, // Apply dashed style to all years
           // dashArray: inflationYears.map((year) =>
           //   parseInt(year) >= 2025 ? 5 : 0
           // ),
