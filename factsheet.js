@@ -44,6 +44,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     };
   }
 
+  function getEstimatedLabel(w, dataPointIndex) {
+    const year = Number(w.globals.categoryLabels[dataPointIndex]);
+    return year >= new Date().getFullYear() ? " (E)" : "";
+  }
+
   // Extract individual sheets from the fetched data, providing empty objects as fallbacks for each metric
   const nominalGdpSheet = sheets["Nominal GDP"] || {};
   const realGdpGrowthSheet = sheets["Real GDP Growth (%)"] || {};
@@ -305,7 +310,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       yaxis: { lines: { show: false } },
     },
     stroke: {
-      curve: "smooth",
+      curve: "straight",
       width: 2,
       fill: {
         type: "gradient",
@@ -369,7 +374,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       yaxis: { lines: { show: false } },
     },
     stroke: {
-      curve: "smooth",
+      curve: "straight",
       width: 2,
       fill: {
         type: "gradient",
@@ -469,6 +474,33 @@ document.addEventListener("DOMContentLoaded", async function () {
         tooltip: {
           enabled: true,
         },
+        // need to check for all after approval
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
+        crosshairs: {
+          show: true,
+          stroke: {
+            color: "#E5E5E5",
+            width: 1,
+            dashArray: 0,
+          },
+        },
+      },
+      yaxis: {
+        show: true,
+        labels: {
+          show: false, // Hide Y-axis labels
+          style: {
+            colors: ["#777"],
+            fontSize: "12px",
+          },
+        },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
         crosshairs: {
           show: true,
           stroke: {
@@ -492,6 +524,20 @@ document.addEventListener("DOMContentLoaded", async function () {
             size: 6,
           },
         ],
+      },
+      tooltip: {
+        enabled: true,
+        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          const value = series[seriesIndex][dataPointIndex];
+          const Estimated = getEstimatedLabel(w, dataPointIndex);
+          return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
+             ${w.globals.seriesNames[seriesIndex]}: ${
+            value !== null
+              ? DollarZeroCurrencyFormatter.format(value) + "Bn" + Estimated
+              : "N/A"
+          }
+          </div>`;
+        },
       },
       dataLabels: {
         enabled: true,
@@ -606,8 +652,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         enabled: true,
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
           const value = series[seriesIndex][dataPointIndex];
-          const year = w.globals.categoryLabels[dataPointIndex];
-          const Estimated = year >= new Date().getFullYear() ? " (E)" : "";
+          const Estimated = getEstimatedLabel(w, dataPointIndex);
           return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
              ${w.globals.seriesNames[seriesIndex]}: ${
             value !== null ? value.toFixed(2) + "%" + Estimated : "N/A"
@@ -713,6 +758,20 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         ],
       },
+      tooltip: {
+        enabled: true,
+        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          const value = series[seriesIndex][dataPointIndex];
+          const Estimated = getEstimatedLabel(w, dataPointIndex);
+          return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
+             ${w.globals.seriesNames[seriesIndex]}: ${
+            value !== null
+              ? DollarZeroCurrencyFormatter.format(value) + Estimated
+              : "N/A"
+          }
+          </div>`;
+        },
+      },
       dataLabels: {
         enabled: true,
         formatter: function (val, opts) {
@@ -776,70 +835,70 @@ document.addEventListener("DOMContentLoaded", async function () {
       : "Data not available"
   );
 
-  renderChart(
-    "populationChart",
-    {
-      ...commonOptions,
-      chart: { ...commonOptions.chart, id: "populationChart", type: "bar" },
-      xaxis: {
-        ...commonOptions.xaxis,
-        categories: ["India"],
-        title: { text: "Country" },
-      },
-      yaxis: {
-        ...commonOptions.yaxis,
-        min: 0,
-        max: 2000,
-        labels: {
-          formatter: (val) => `${Formatter.format(val)} M`,
-          // `${val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
-        },
-      },
-      series: [
-        { name: "India", data: [populationSheet["India"]?.["2025"] || null] },
-      ],
-      annotations: {
-        points: (() => {
-          const year = getAnnotationYear(populationYears, populationSheet);
-          if (!year) return [];
-          return [
-            {
-              x: "India",
-              y: populationSheet["India"]?.[year] || null,
-              marker: {
-                size: 6,
-                fillColor: "#1e40af",
-                strokeColor: "#fff",
-                radius: 2,
-              },
-              label: {
-                // text: `${year}\n${(populationSheet["India"]?.[year] || 0)
-                //   .toFixed(2)
-                //   .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
-                text: `${year}\n${Formatter.format(
-                  populationSheet["India"]?.[year] || 0
-                )} M`,
-                position: "top",
-                offsetY: -15,
-                style: {
-                  color: "#1e40af",
-                  background: "#fff",
-                  padding: "4px",
-                  borderRadius: "4px",
-                },
-              },
-            },
-          ];
-        })(),
-      },
-    },
-    populationSheet["India"]?.["2025"]
-      ? // ? `${populationSheet["India"]["2025"]
-        //     .toFixed(2)
-        //     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M 2025 Estimate`
-        `${Formatter.format(populationSheet["India"]["2025"])} M 2025 Estimate`
-      : "Data not available"
-  );
+  // renderChart(
+  //   "populationChart",
+  //   {
+  //     ...commonOptions,
+  //     chart: { ...commonOptions.chart, id: "populationChart", type: "bar" },
+  //     xaxis: {
+  //       ...commonOptions.xaxis,
+  //       categories: ["India"],
+  //       title: { text: "Country" },
+  //     },
+  //     yaxis: {
+  //       ...commonOptions.yaxis,
+  //       min: 0,
+  //       max: 2000,
+  //       labels: {
+  //         formatter: (val) => `${Formatter.format(val)} M`,
+  //         // `${val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
+  //       },
+  //     },
+  //     series: [
+  //       { name: "India", data: [populationSheet["India"]?.["2025"] || null] },
+  //     ],
+  //     annotations: {
+  //       points: (() => {
+  //         const year = getAnnotationYear(populationYears, populationSheet);
+  //         if (!year) return [];
+  //         return [
+  //           {
+  //             x: "India",
+  //             y: populationSheet["India"]?.[year] || null,
+  //             marker: {
+  //               size: 6,
+  //               fillColor: "#1e40af",
+  //               strokeColor: "#fff",
+  //               radius: 2,
+  //             },
+  //             label: {
+  //               // text: `${year}\n${(populationSheet["India"]?.[year] || 0)
+  //               //   .toFixed(2)
+  //               //   .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
+  //               text: `${year}\n${Formatter.format(
+  //                 populationSheet["India"]?.[year] || 0
+  //               )} M`,
+  //               position: "top",
+  //               offsetY: -15,
+  //               style: {
+  //                 color: "#1e40af",
+  //                 background: "#fff",
+  //                 padding: "4px",
+  //                 borderRadius: "4px",
+  //               },
+  //             },
+  //           },
+  //         ];
+  //       })(),
+  //     },
+  //   },
+  //   populationSheet["India"]?.["2025"]
+  //     ? // ? `${populationSheet["India"]["2025"]
+  //       //     .toFixed(2)
+  //       //     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M 2025 Estimate`
+  //       `${Formatter.format(populationSheet["India"]["2025"])} M 2025 Estimate`
+  //     : "Data not available"
+  // );
 
   renderChart(
     "unemploymentRateChart",
@@ -876,6 +935,19 @@ document.addEventListener("DOMContentLoaded", async function () {
             size: 6,
           },
         ],
+      },
+      tooltip: {
+        enabled: true,
+        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          const value = series[seriesIndex][dataPointIndex];
+          const year = w.globals.categoryLabels[dataPointIndex];
+          const isEstimated = parseInt(year) >= 2025 ? " (E)" : "";
+          return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
+            ${w.globals.seriesNames[seriesIndex]}: ${
+            value !== null ? value.toFixed(2) + "%" + isEstimated : "N/A"
+          }
+          </div>`;
+        },
       },
       dataLabels: {
         enabled: true,
@@ -1005,6 +1077,19 @@ document.addEventListener("DOMContentLoaded", async function () {
       },
       series: seriesData.governmentBond,
       colors: ["#1e40af"],
+      tooltip: {
+        enabled: true,
+        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          const value = series[seriesIndex][dataPointIndex];
+          const year = w.globals.categoryLabels[dataPointIndex];
+          const isEstimated = parseInt(year) >= 2025 ? " (E)" : "";
+          return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
+            ${w.globals.seriesNames[seriesIndex]}: ${
+            value !== null ? value.toFixed(2) + "%" + isEstimated : "N/A"
+          }
+          </div>`;
+        },
+      },
       annotations: {
         points: (() => {
           const year = getAnnotationYear(bondYears, governmentBondSheet);
@@ -1233,10 +1318,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       tooltip: {
         enabled: true,
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          const Estimated = getEstimatedLabel(w, dataPointIndex);
           const value = series[seriesIndex][dataPointIndex];
           return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
               ${w.globals.seriesNames[seriesIndex]}: ${
-            value !== null ? value.toFixed(2) : "N/A"
+            value !== null ? value.toFixed(2) + Estimated : "N/A"
           }
             </div>`;
         },
@@ -1323,9 +1409,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         enabled: true,
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
           const value = series[seriesIndex][dataPointIndex];
+          const Estimated = getEstimatedLabel(w, dataPointIndex);
           return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
               ${w.globals.seriesNames[seriesIndex]}: ${
-            value !== null ? value.toFixed(2) : "N/A"
+            value !== null ? value.toFixed(2) + Estimated : "N/A"
           }
             </div>`;
         },
@@ -1587,7 +1674,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           yaxis: { lines: { show: false } },
         },
         stroke: {
-          curve: "smooth",
+          curve: "straight",
           width: 2,
           fill: {
             type: "gradient",
@@ -1612,13 +1699,14 @@ document.addEventListener("DOMContentLoaded", async function () {
           enabled: true,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
             const value = series[seriesIndex][dataPointIndex];
+            const Estimated = getEstimatedLabel(w, dataPointIndex);
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
               ${w.globals.seriesNames[seriesIndex]}: ${
               value !== null
                 ? // ? "$" +
                   //   value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
                   //   " Bn"
-                  value.toFixed(2) + "%"
+                  value.toFixed(2) + "%" + Estimated
                 : // DollarZeroCurrencyFormatter.format(value) + " Bn"
                   "N/A"
             }
@@ -1671,7 +1759,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           yaxis: { lines: { show: false } },
         },
         stroke: {
-          curve: "smooth",
+          curve: "straight",
           width: 2,
           fill: {
             type: "gradient",
@@ -1696,9 +1784,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           enabled: true,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
             const value = series[seriesIndex][dataPointIndex];
+            const Estimated = getEstimatedLabel(w, dataPointIndex);
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
               ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + "%" : "N/A"
+              value !== null ? value.toFixed(2) + "%" + Estimated : "N/A"
             }
             </div>`;
           },
@@ -1749,7 +1838,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           yaxis: { lines: { show: false } },
         },
         stroke: {
-          curve: "smooth",
+          curve: "straight",
           width: 2,
           fill: {
             type: "gradient",
@@ -1774,9 +1863,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           enabled: true,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
             const value = series[seriesIndex][dataPointIndex];
+            const Estimated = getEstimatedLabel(w, dataPointIndex);
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
               ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + "%" : "N/A"
+              value !== null ? value.toFixed(2) + "%" + Estimated : "N/A"
             }
             </div>`;
           },
@@ -1907,7 +1997,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           yaxis: { lines: { show: true } },
         },
         stroke: {
-          curve: "smooth",
+          curve: "straight",
           width: 2,
           fill: {
             type: "gradient",
@@ -1988,7 +2078,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           yaxis: { lines: { show: false } },
         },
         stroke: {
-          curve: "smooth",
+          curve: "straight",
           width: 2,
           fill: {
             type: "gradient",
@@ -2013,9 +2103,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           enabled: true,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
             const value = series[seriesIndex][dataPointIndex];
+            const Estimated = getEstimatedLabel(w, dataPointIndex);
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
             ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + "%" : "N/A"
+              value !== null ? value.toFixed(2) + "%" + Estimated : "N/A"
             }
           </div>`;
           },
@@ -2066,7 +2157,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           yaxis: { lines: { show: false } },
         },
         stroke: {
-          curve: "smooth",
+          curve: "straight",
           width: 2,
           fill: {
             type: "gradient",
@@ -2140,7 +2231,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           yaxis: { lines: { show: false } },
         },
         stroke: {
-          curve: "smooth",
+          curve: "straight",
           width: 2,
           fill: {
             type: "gradient",
@@ -2215,7 +2306,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           yaxis: { lines: { show: false } },
         },
         stroke: {
-          curve: "smooth",
+          curve: "straight",
           width: 2,
           fill: {
             type: "gradient",
@@ -2240,9 +2331,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           enabled: true,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
             const value = series[seriesIndex][dataPointIndex];
+            const Estimated = getEstimatedLabel(w, dataPointIndex);
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
                 ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) : "N/A"
+              value !== null ? value.toFixed(2) + Estimated : "N/A"
             }
               </div>`;
           },
@@ -2298,7 +2390,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           yaxis: { lines: { show: false } },
         },
         stroke: {
-          curve: "smooth",
+          curve: "straight",
           width: 2,
           fill: {
             type: "gradient",
@@ -2323,9 +2415,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           enabled: true,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
             const value = series[seriesIndex][dataPointIndex];
+            const Estimated = getEstimatedLabel(w, dataPointIndex);
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
                 ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) : "N/A"
+              value !== null ? value.toFixed(2) + Estimated : "N/A"
             }
               </div>`;
           },
@@ -2386,7 +2479,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           yaxis: { lines: { show: false } },
         },
         stroke: {
-          curve: "smooth",
+          curve: "straight",
           width: 2,
           fill: {
             type: "gradient",
@@ -2411,9 +2504,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           enabled: true,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
             const value = series[seriesIndex][dataPointIndex];
+            const Estimated = getEstimatedLabel(w, dataPointIndex);
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
                 ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) : "N/A"
+              value !== null ? value.toFixed(2) + Estimated : "N/A"
             }
               </div>`;
           },
@@ -2469,7 +2563,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           yaxis: { lines: { show: false } },
         },
         stroke: {
-          curve: "smooth",
+          curve: "straight",
           width: 2,
           dashArray: 0, // Apply dashed style to all years
           // dashArray: inflationYears.map((year) =>
@@ -2498,9 +2592,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           enabled: true,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
             const value = series[seriesIndex][dataPointIndex];
+            const Estimated = getEstimatedLabel(w, dataPointIndex);
             return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
           ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + "%" : "N/A"
+              value !== null ? value.toFixed(2) + "%" + Estimated : "N/A"
             }
         </div>`;
           },
