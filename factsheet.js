@@ -387,7 +387,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
       },
     },
-    colors: ["#000080", "#0077B6", "#00FF00", "#636363", "#00CED1"],
+    colors: ["#1E6AAE", "#2492e0", "#5ab9f7", "#599AC5", "#b0b0b0"],
     markers: {
       size: 4,
       strokeWidth: 2,
@@ -624,6 +624,32 @@ document.addEventListener("DOMContentLoaded", async function () {
         tooltip: {
           enabled: true,
         },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
+        crosshairs: {
+          show: true,
+          stroke: {
+            color: "#E5E5E5",
+            width: 1,
+            dashArray: 0,
+          },
+        },
+      },
+      yaxis: {
+        show: true,
+        labels: {
+          show: false, // Hide Y-axis labels
+          style: {
+            colors: ["#777"],
+            fontSize: "12px",
+          },
+        },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
         crosshairs: {
           show: true,
           stroke: {
@@ -733,6 +759,32 @@ document.addEventListener("DOMContentLoaded", async function () {
         categories: years,
         tooltip: {
           enabled: true,
+        },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
+        crosshairs: {
+          show: true,
+          stroke: {
+            color: "#E5E5E5",
+            width: 1,
+            dashArray: 0,
+          },
+        },
+      },
+      yaxis: {
+        show: true,
+        labels: {
+          show: false, // Hide Y-axis labels
+          style: {
+            colors: ["#777"],
+            fontSize: "12px",
+          },
+        },
+        axisBorder: {
+          show: true,
+          color: "#777",
         },
         crosshairs: {
           show: true,
@@ -911,6 +963,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         tooltip: {
           enabled: true,
         },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
         crosshairs: {
           show: true,
           stroke: {
@@ -920,7 +976,31 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
       },
-      yaxis: { ...commonOptions.yaxis, min: 0, max: 10 },
+      yaxis: {
+        ...commonOptions.yaxis,
+        min: 0,
+        max: 10,
+        show: true,
+        labels: {
+          show: false, // Hide Y-axis labels
+          style: {
+            colors: ["#777"],
+            fontSize: "12px",
+          },
+        },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
+        crosshairs: {
+          show: true,
+          stroke: {
+            color: "#E5E5E5",
+            width: 1,
+            dashArray: 0,
+          },
+        },
+      },
       series: seriesData.unemploymentRate,
       markers: {
         size: 0,
@@ -1057,6 +1137,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       xaxis: {
         ...commonOptions.xaxis,
         categories: bondYears,
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
         tooltip: {
           enabled: true,
         },
@@ -1069,11 +1153,35 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
       },
+      // yaxis: {
+      //   ...commonOptions.yaxis,
+      //   // show: true,
+      //   max: 15,
+      //   labels: { formatter: (val) => `${val.toFixed(1)}%` },
+      // },
       yaxis: {
         ...commonOptions.yaxis,
-        // show: true,
+        show: true,
         max: 15,
-        labels: { formatter: (val) => `${val.toFixed(1)}%` },
+        labels: {
+          show: false, // Hide Y-axis labels
+          style: {
+            colors: ["#777"],
+            fontSize: "12px",
+          },
+        },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
+        crosshairs: {
+          show: true,
+          stroke: {
+            color: "#E5E5E5",
+            width: 1,
+            dashArray: 0,
+          },
+        },
       },
       series: seriesData.governmentBond,
       colors: ["#1e40af"],
@@ -1156,6 +1264,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         tooltip: {
           enabled: true,
         },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
         crosshairs: {
           show: true,
           stroke: {
@@ -1165,9 +1277,33 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
       },
-      yaxis: { ...commonOptions.yaxis, min: -500, max: 750 },
+      yaxis: {
+        ...commonOptions.yaxis,
+        min: -500,
+        max: 750,
+        show: true,
+        labels: {
+          show: false, // Hide Y-axis labels
+          style: {
+            colors: ["#777"],
+            fontSize: "12px",
+          },
+        },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
+        crosshairs: {
+          show: true,
+          stroke: {
+            color: "#E5E5E5",
+            width: 1,
+            dashArray: 0,
+          },
+        },
+      },
       series: seriesData.merchandiseTrade,
-      colors: ["#1e40af", "#0077B6", "#65a30d"],
+      colors: ["#1E6AAE", "#2492e0", "#5ab9f7"],
       annotations: {
         points: (() => {
           const year =
@@ -1227,11 +1363,22 @@ document.addEventListener("DOMContentLoaded", async function () {
         type: "bar",
         height: 220,
       },
-      xaxis: { ...commonOptions.xaxis, categories: shareAISYears },
+      xaxis: {
+        ...commonOptions.xaxis,
+        categories: shareAISYears,
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
+      },
       yaxis: {
         show: true,
         min: 0,
         max: 70,
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
         tickAmount: 7, // Show 7 ticks to align with multiples of 10 (0, 10, 20, 30, 40, 50, 60, 70)
         labels: { formatter: (val) => `${Math.round(val)}%` }, // Remove decimal and show as 10%, 20%, etc.
       },
@@ -1294,6 +1441,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         tooltip: {
           enabled: true,
         },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
         crosshairs: {
           show: true,
           stroke: {
@@ -1304,7 +1455,31 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         title: { text: "Sensex" },
       },
-      yaxis: { ...commonOptions.yaxis, min: 0, max: 80000 },
+      yaxis: {
+        ...commonOptions.yaxis,
+        show: true,
+        labels: {
+          show: false, // Hide Y-axis labels
+          style: {
+            colors: ["#777"],
+            fontSize: "12px",
+          },
+        },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
+        crosshairs: {
+          show: true,
+          stroke: {
+            color: "#E5E5E5",
+            width: 1,
+            dashArray: 0,
+          },
+        },
+        min: 0,
+        max: 80000,
+      },
       series: [
         {
           name: "SENSEX",
@@ -1384,6 +1559,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         tooltip: {
           enabled: true,
         },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
         crosshairs: {
           show: true,
           stroke: {
@@ -1394,7 +1573,30 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         title: { text: "Nifty" },
       },
-      yaxis: { ...commonOptions.yaxis, min: 0, max: 30000 },
+      yaxis: {
+        show: true,
+        labels: {
+          show: false, // Hide Y-axis labels
+          style: {
+            colors: ["#777"],
+            fontSize: "12px",
+          },
+        },
+        axisBorder: {
+          show: true,
+          color: "#777",
+        },
+        crosshairs: {
+          show: true,
+          stroke: {
+            color: "#E5E5E5",
+            width: 1,
+            dashArray: 0,
+          },
+        },
+        min: 0,
+        max: 30000,
+      },
       series: [
         {
           name: "NIFTY",
@@ -1652,8 +1854,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         xaxis: {
           title: { text: "Year" },
           labels: { style: { colors: "#9ca3af" } },
-          axisBorder: { show: false },
           axisTicks: { show: false },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           categories: years,
           tooltip: {
             enabled: true,
@@ -1667,7 +1872,22 @@ document.addEventListener("DOMContentLoaded", async function () {
             },
           },
         },
-        yaxis: { show: true },
+        yaxis: {
+          show: true,
+          title: { text: "India" },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
+          crosshairs: {
+            show: true,
+            stroke: {
+              color: "#E5E5E5",
+              width: 1,
+              dashArray: 0,
+            },
+          },
+        },
         grid: {
           show: true,
           xaxis: { lines: { show: false } },
@@ -1687,7 +1907,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             },
           },
         },
-        colors: ["#000080", "#0077B6", "#00FF00", "#636363", "#00CED1"],
+        colors: ["#1E6AAE", "#2492e0", "#5ab9f7", "#599AC5", "#b0b0b0"],
         markers: {
           size: 4,
           strokeWidth: 2,
@@ -1714,6 +1934,24 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         dataLabels: { enabled: false },
+        annotations: {
+          texts: [
+            {
+              x: "50%", // Center horizontally
+              y: 20, // Position near the top
+              text: "Growth in Nominal GDP (%)",
+              textAnchor: "middle",
+              style: {
+                color: "#1e40af",
+                fontSize: "16px",
+                fontWeight: "bold",
+                background: "#fff",
+                padding: "4px",
+                borderRadius: "4px",
+              },
+            },
+          ],
+        },
         series: seriesData.nominalGdpAll,
         legend: {
           show: true,
@@ -1737,7 +1975,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         xaxis: {
           title: { text: "Year" },
           labels: { style: { colors: "#9ca3af" } },
-          axisBorder: { show: false },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           axisTicks: { show: false },
           categories: realGdpYears,
           tooltip: {
@@ -1752,7 +1993,23 @@ document.addEventListener("DOMContentLoaded", async function () {
             },
           },
         },
-        yaxis: { show: true, min: 0 },
+        yaxis: {
+          show: true,
+          title: { text: "India" },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
+          crosshairs: {
+            show: true,
+            stroke: {
+              color: "#E5E5E5",
+              width: 1,
+              dashArray: 0,
+            },
+          },
+          min: 0,
+        },
         grid: {
           show: false,
           xaxis: { lines: { show: false } },
@@ -1772,7 +2029,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             },
           },
         },
-        colors: ["#000080", "#0077B6", "#00FF00", "#636363", "#00CED1"],
+        colors: ["#1E6AAE", "#2492e0", "#5ab9f7", "#599AC5", "#b0b0b0"],
         markers: {
           size: 4,
           strokeWidth: 2,
@@ -1793,6 +2050,24 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         dataLabels: { enabled: false },
+        annotations: {
+          texts: [
+            {
+              x: "50%", // Center horizontally
+              y: 20, // Position near the top
+              text: "Real GDP Growth (%)",
+              textAnchor: "middle",
+              style: {
+                color: "#1e40af",
+                fontSize: "16px",
+                fontWeight: "bold",
+                background: "#fff",
+                padding: "4px",
+                borderRadius: "4px",
+              },
+            },
+          ],
+        },
         legend: {
           show: true,
           markers: { shape: "rectangle", width: 15, height: 5 },
@@ -1816,7 +2091,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         xaxis: {
           title: { text: "Year" },
           labels: { style: { colors: "#9ca3af" } },
-          axisBorder: { show: false },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           axisTicks: { show: false },
           categories: years,
           tooltip: {
@@ -1831,7 +2109,22 @@ document.addEventListener("DOMContentLoaded", async function () {
             },
           },
         },
-        yaxis: { show: true },
+        yaxis: {
+          show: true,
+          title: { text: "India" },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
+          crosshairs: {
+            show: true,
+            stroke: {
+              color: "#E5E5E5",
+              width: 1,
+              dashArray: 0,
+            },
+          },
+        },
         grid: {
           show: true,
           xaxis: { lines: { show: false } },
@@ -1851,7 +2144,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             },
           },
         },
-        colors: ["#000080", "#0077B6", "#00FF00", "#636363", "#00CED1"],
+        colors: ["#1E6AAE", "#2492e0", "#5ab9f7", "#599AC5", "#b0b0b0"],
         markers: {
           size: 4,
           strokeWidth: 2,
@@ -1872,6 +2165,24 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         dataLabels: { enabled: false },
+        annotations: {
+          texts: [
+            {
+              x: "50%", // Center horizontally
+              y: 20, // Position near the top
+              text: "Growth in GDP Per Capita (%)",
+              textAnchor: "middle",
+              style: {
+                color: "#1e40af",
+                fontSize: "16px",
+                fontWeight: "bold",
+                background: "#fff",
+                padding: "4px",
+                borderRadius: "4px",
+              },
+            },
+          ],
+        },
         series: seriesData.gdpPerCapitaAll,
         legend: {
           show: true,
@@ -1895,14 +2206,22 @@ document.addEventListener("DOMContentLoaded", async function () {
         xaxis: {
           title: { text: "Country" },
           labels: { style: { colors: "#9ca3af" } },
-          axisBorder: { show: false },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           axisTicks: { show: false },
           categories: countries,
         },
         yaxis: {
           show: true,
+          title: { text: "2025" },
           min: 0,
           max: 2000,
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           labels: {
             formatter: (val) => `${Formatter.format(val)}`,
             // `${val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} M`,
@@ -1920,7 +2239,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             distributed: true,
           },
         },
-        colors: ["#000080", "#0077B6", "#00FF00", "#636363", "#00CED1"],
+        colors: ["#1E6AAE", "#2492e0", "#5ab9f7", "#599AC5", "#b0b0b0"],
         dataLabels: { enabled: false },
         tooltip: {
           enabled: true,
@@ -1970,7 +2289,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         xaxis: {
           title: { text: "Year" },
           labels: { style: { colors: "#9ca3af" } },
-          axisBorder: { show: false },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           axisTicks: { show: false },
           categories: unemploymentYears,
           tooltip: {
@@ -1989,6 +2311,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           show: true,
           min: 0,
           max: 10,
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           labels: { formatter: (val) => `${val.toFixed(1)}%` },
         },
         grid: {
@@ -2051,7 +2377,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         xaxis: {
           title: { text: "Year" },
           labels: { style: { colors: "#9ca3af" } },
-          axisBorder: { show: false },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           axisTicks: { show: false },
           categories: bondYears,
           tooltip: {
@@ -2068,8 +2397,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         yaxis: {
           show: true,
+          title: { text: "India" },
           min: 0,
           max: 15,
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           labels: { formatter: (val) => `${val.toFixed(1)}%` },
         },
         grid: {
@@ -2091,7 +2425,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             },
           },
         },
-        colors: ["#000080", "#0077B6", "#00FF00", "#636363", "#00CED1"],
+        colors: ["#1E6AAE", "#2492e0", "#5ab9f7", "#599AC5", "#b0b0b0"],
         markers: {
           size: 4,
           strokeWidth: 2,
@@ -2135,7 +2469,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         xaxis: {
           title: { text: "Year" },
           labels: { style: { colors: "#9ca3af" } },
-          axisBorder: { show: false },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           axisTicks: { show: false },
           categories: merchandiseYears,
           tooltip: {
@@ -2150,7 +2487,15 @@ document.addEventListener("DOMContentLoaded", async function () {
             },
           },
         },
-        yaxis: { show: true, min: -500, max: 750 },
+        yaxis: {
+          show: true,
+          min: -500,
+          max: 750,
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
+        },
         grid: {
           show: true,
           xaxis: { lines: { show: false } },
@@ -2451,7 +2796,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         xaxis: {
           title: { text: "Year" },
           labels: { style: { colors: "#9ca3af" } },
-          axisBorder: { show: false },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           axisTicks: { show: false },
           categories: medianAgeYears,
           tooltip: {
@@ -2471,6 +2819,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           min: 0,
           max: 60,
           title: { text: "Median Age" },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           labels: { formatter: (val) => `${Math.round(val)}` },
         },
         grid: {
@@ -2492,7 +2844,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             },
           },
         },
-        colors: ["#000080", "#0077B6", "#00FF00", "#636363", "#00CED1"],
+        colors: ["#1E6AAE", "#2492e0", "#5ab9f7", "#599AC5", "#b0b0b0"],
         markers: {
           size: 4,
           strokeWidth: 2,
@@ -2536,7 +2888,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         xaxis: {
           title: { text: "Year" },
           labels: { style: { colors: "#9ca3af" } },
-          axisBorder: { show: false },
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           axisTicks: { show: false },
           categories: inflationYears,
           tooltip: {
@@ -2553,8 +2908,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         yaxis: {
           show: true,
+          title: { text: "India" },
           min: 0,
           max: 20,
+          axisBorder: {
+            show: true,
+            color: "#777",
+          },
           labels: { formatter: (val) => `${Math.round(val)}%` },
         },
         grid: {
