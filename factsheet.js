@@ -86,7 +86,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     realGdpGrowthSheet,
     "India",
     fallbackGrowthYears
-  );
+  ).filter((year) => Number(year) >= 2025);
+
   const populationYears = getYears(populationSheet, "India", fallbackYears);
   const unemploymentYears = getYears(
     unemploymentRateSheet,
@@ -340,11 +341,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             ? "M"
             : w.config.chart.id.includes("merchandiseChart")
             ? "B"
-            : w.config.chart.id.includes("nominalGdpChart") // ||  w.config.chart.id.includes("gdpPerCapita")
+            : w.config.chart.id.includes("nominalGdpChart")
             ? "Bn"
             : "";
         return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-            ${w.globals.seriesNames[seriesIndex]}: ${
+          ${w.globals.seriesNames[seriesIndex]}: ${
           value !== null
             ? (w.config.chart.id.includes("nominalGdpChart") ||
               w.config.chart.id.includes("gdpPerCapita")
@@ -352,7 +353,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 : value.toFixed(2)) + unit
             : "N/A"
         }
-          </div>`;
+        </div>`;
       },
     },
     dataLabels: { enabled: false },
@@ -369,9 +370,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     },
     yaxis: { show: true, min: 0 },
     grid: {
-      show: false,
+      show: true,
       xaxis: { lines: { show: false } },
-      yaxis: { lines: { show: false } },
+      yaxis: {
+        lines: {
+          show: true, // Enable Y-axis grid lines
+          dashArray: 2, // Dotted line effect
+        },
+      },
     },
     stroke: {
       curve: "straight",
@@ -413,14 +419,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             ? ""
             : "";
         return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-            ${w.globals.seriesNames[seriesIndex]}: ${
+          ${w.globals.seriesNames[seriesIndex]}: ${
           value !== null
             ? (w.config.chart.id.includes("gdpPerCapita")
                 ? "$" + value.toFixed(2)
                 : value.toFixed(2)) + unit
             : "N/A"
         }
-          </div>`;
+        </div>`;
       },
     },
     dataLabels: { enabled: false },
@@ -429,7 +435,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       markers: { shape: "rectangle", width: 15, height: 5 },
     },
   };
-
   // Render an ApexChart in a specified container and add an estimate label (2025 or fallback)
   const renderChart = (containerId, options, estimateText) => {
     try {
@@ -730,8 +735,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 text: `${(realGdpGrowthSheet["India"]?.[year] || 0).toFixed(
                   2
                 )}%`,
-                position: "top",
-                offsetY: -15,
+                position: "right", // Changed from "top" to "right"
+                offsetX: 25, // Added to position the label slightly to the right of the point
+                offsetY: -10,
                 style: {
                   color: "#1e40af",
                   background: "#fff",
@@ -1076,9 +1082,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 radius: 2,
               },
               label: {
-                text: `${year}\n${(
-                  unemploymentRateSheet["India"]?.[year] || 0
-                ).toFixed(2)}%`,
+                text: `${(unemploymentRateSheet["India"]?.[year] || 0).toFixed(
+                  2
+                )}%`,
                 position: "top",
                 offsetY: -15,
                 style: {
@@ -1214,9 +1220,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 radius: 2,
               },
               label: {
-                text: `${year}\n${(
-                  governmentBondSheet["India"]?.[year] || 0
-                ).toFixed(2)}%`,
+                text: `${(governmentBondSheet["India"]?.[year] || 0).toFixed(
+                  2
+                )}%`,
                 position: "top",
                 offsetY: -15,
                 style: {
@@ -1327,9 +1333,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 radius: 2,
               },
               label: {
-                text: `${year}\n${(
-                  merchandiseTradeSheet[year]?.Exports || 0
-                ).toFixed(2)}`,
+                text: `${(merchandiseTradeSheet[year]?.Exports || 0).toFixed(
+                  2
+                )}`,
                 position: "top",
                 offsetY: -15,
                 style: {
@@ -1379,11 +1385,11 @@ document.addEventListener("DOMContentLoaded", async function () {
           show: true,
           color: "#777",
         },
-        tickAmount: 7, // Show 7 ticks to align with multiples of 10 (0, 10, 20, 30, 40, 50, 60, 70)
-        labels: { formatter: (val) => `${Math.round(val)}%` }, // Remove decimal and show as 10%, 20%, etc.
+        tickAmount: 7,
+        labels: { formatter: (val) => `${Math.round(val)}%` },
       },
       series: seriesData.shareAIS,
-      colors: ["#1e40af", "#0077B6", "#65a30d"],
+      colors: ["#1E6AAE", "#2492e0", "#5ab9f7"],
       plotOptions: { bar: { horizontal: false, columnWidth: "55%" } },
       annotations: {
         points: (() => {
@@ -1399,18 +1405,16 @@ document.addEventListener("DOMContentLoaded", async function () {
               y: shareAISSheet["Services"]?.[year] || null,
               marker: {
                 size: 6,
-                fillColor: "#65a30d",
+                fillColor: "#5ab9f7",
                 strokeColor: "#fff",
                 radius: 2,
               },
               label: {
-                text: `${year}\n${(
-                  shareAISSheet["Services"]?.[year] || 0
-                ).toFixed(2)}%`,
+                text: `${(shareAISSheet["Services"]?.[year] || 0).toFixed(2)}%`,
                 position: "top",
                 offsetY: -15,
                 style: {
-                  color: "#65a30d",
+                  color: "#5ab9f7",
                   background: "#fff",
                   padding: "4px",
                   borderRadius: "4px",
@@ -1493,11 +1497,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       tooltip: {
         enabled: true,
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-          const Estimated = getEstimatedLabel(w, dataPointIndex);
           const value = series[seriesIndex][dataPointIndex];
           return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
               ${w.globals.seriesNames[seriesIndex]}: ${
-            value !== null ? value.toFixed(2) + Estimated : "N/A"
+            value !== null ? value.toFixed(2) : "N/A"
           }
             </div>`;
         },
@@ -1521,9 +1524,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 radius: 2,
               },
               label: {
-                text: `${year}\n${(
-                  annualReturnsSheet["SENSEX"]?.[year] || 0
-                ).toFixed(2)}`,
+                text: `${(annualReturnsSheet["SENSEX"]?.[year] || 0).toFixed(
+                  2
+                )}`,
                 position: "top",
                 offsetY: -15,
                 style: {
@@ -1611,10 +1614,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         enabled: true,
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
           const value = series[seriesIndex][dataPointIndex];
-          const Estimated = getEstimatedLabel(w, dataPointIndex);
           return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
               ${w.globals.seriesNames[seriesIndex]}: ${
-            value !== null ? value.toFixed(2) + Estimated : "N/A"
+            value !== null ? value.toFixed(2) : "N/A"
           }
             </div>`;
         },
@@ -1638,9 +1640,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 radius: 2,
               },
               label: {
-                text: `${year}\n${(
-                  annualReturnsSheet["NIFTY"]?.[year] || 0
-                ).toFixed(2)}`,
+                text: `${(annualReturnsSheet["NIFTY"]?.[year] || 0).toFixed(
+                  2
+                )}`,
                 position: "top",
                 offsetY: -15,
                 style: {
@@ -1890,8 +1892,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         grid: {
           show: true,
+          strokeDashArray: 4,
           xaxis: { lines: { show: false } },
-          yaxis: { lines: { show: false } },
+          yaxis: {
+            lines: {
+              show: true,
+              dashArray: 10,
+            },
+          },
         },
         stroke: {
           curve: "straight",
@@ -1939,7 +1947,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             {
               x: "50%", // Center horizontally
               y: 20, // Position near the top
-              text: "Growth in Nominal GDP (%)",
+              // text: "Growth in Nominal GDP (%)",
               textAnchor: "middle",
               style: {
                 color: "#1e40af",
@@ -2011,9 +2019,15 @@ document.addEventListener("DOMContentLoaded", async function () {
           min: 0,
         },
         grid: {
-          show: false,
+          show: true,
+          strokeDashArray: 4,
           xaxis: { lines: { show: false } },
-          yaxis: { lines: { show: false } },
+          yaxis: {
+            lines: {
+              show: true,
+              dashArray: 10,
+            },
+          },
         },
         stroke: {
           curve: "straight",
@@ -2055,7 +2069,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             {
               x: "50%", // Center horizontally
               y: 20, // Position near the top
-              text: "Real GDP Growth (%)",
+              // text: "Real GDP Growth (%)",
               textAnchor: "middle",
               style: {
                 color: "#1e40af",
@@ -2127,8 +2141,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         grid: {
           show: true,
+          strokeDashArray: 4,
           xaxis: { lines: { show: false } },
-          yaxis: { lines: { show: false } },
+          yaxis: {
+            lines: {
+              show: true,
+              dashArray: 10,
+            },
+          },
         },
         stroke: {
           curve: "straight",
@@ -2170,7 +2190,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             {
               x: "50%", // Center horizontally
               y: 20, // Position near the top
-              text: "Growth in GDP Per Capita (%)",
+              // text: "Growth in GDP Per Capita (%)",
               textAnchor: "middle",
               style: {
                 color: "#1e40af",
@@ -2228,9 +2248,15 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         grid: {
-          show: false,
+          show: true,
+          strokeDashArray: 4,
           xaxis: { lines: { show: false } },
-          yaxis: { lines: { show: false } },
+          yaxis: {
+            lines: {
+              show: true,
+              dashArray: 10,
+            },
+          },
         },
         plotOptions: {
           bar: {
@@ -2319,8 +2345,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         grid: {
           show: true,
+          strokeDashArray: 4,
           xaxis: { lines: { show: false } },
-          yaxis: { lines: { show: true } },
+          yaxis: {
+            lines: {
+              show: true,
+              dashArray: 10,
+            },
+          },
         },
         stroke: {
           curve: "straight",
@@ -2407,9 +2439,15 @@ document.addEventListener("DOMContentLoaded", async function () {
           labels: { formatter: (val) => `${val.toFixed(1)}%` },
         },
         grid: {
-          show: false,
+          show: true,
+          strokeDashArray: 4,
           xaxis: { lines: { show: false } },
-          yaxis: { lines: { show: false } },
+          yaxis: {
+            lines: {
+              show: true,
+              dashArray: 10,
+            },
+          },
         },
         stroke: {
           curve: "straight",
@@ -2826,9 +2864,15 @@ document.addEventListener("DOMContentLoaded", async function () {
           labels: { formatter: (val) => `${Math.round(val)}` },
         },
         grid: {
-          show: false,
+          show: true,
+          strokeDashArray: 4,
           xaxis: { lines: { show: false } },
-          yaxis: { lines: { show: false } },
+          yaxis: {
+            lines: {
+              show: true,
+              dashArray: 10,
+            },
+          },
         },
         stroke: {
           curve: "straight",
@@ -2918,9 +2962,15 @@ document.addEventListener("DOMContentLoaded", async function () {
           labels: { formatter: (val) => `${Math.round(val)}%` },
         },
         grid: {
-          show: false,
+          show: true,
+          strokeDashArray: 4,
           xaxis: { lines: { show: false } },
-          yaxis: { lines: { show: false } },
+          yaxis: {
+            lines: {
+              show: true,
+              dashArray: 10,
+            },
+          },
         },
         stroke: {
           curve: "straight",
