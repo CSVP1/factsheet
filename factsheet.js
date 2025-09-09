@@ -536,18 +536,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           const value = series[seriesIndex][dataPointIndex];
           const Estimated = getEstimatedLabel(w, dataPointIndex);
           return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-             ${w.globals.seriesNames[seriesIndex]}: ${
+           ${w.globals.seriesNames[seriesIndex]}: ${
             value !== null
               ? DollarZeroCurrencyFormatter.format(value) + "Bn" + Estimated
               : "N/A"
           }
-          </div>`;
+        </div>`;
         },
       },
       dataLabels: {
         enabled: true,
         formatter: function (val, opts) {
-          const year = getAnnotationYear(years, nominalGdpSheet);
+          const year = getAnnotationYear(years, nominalGdpSheet.main); // Use main here
+
           return opts.w.globals.labels[opts.dataPointIndex] === year
             ? val !== null
               ? //  "$" +
@@ -575,12 +576,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       },
       annotations: {
         points: (() => {
-          const year = getAnnotationYear(years, nominalGdpSheet);
+          const year = getAnnotationYear(years, nominalGdpSheet.main); // Use main here
           if (!year) return [];
           return [
             {
               x: year,
-              y: nominalGdpSheet.percentage["India"]?.[year] || null,
+              y: nominalGdpSheet.main["India"]?.[year] || null, // Fix: Use main instead of percentage
               marker: {
                 size: 6,
                 fillColor: "#1e40af",
@@ -591,7 +592,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 // text: `${year}\n$${(nominalGdpSheet["India"]?.[year] || 0)
                 //   .toFixed(0)
                 //   .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Bn`,
-                text: `${year}\n${DollarZeroCurrencyFormatter.format(
+                text: `${DollarZeroCurrencyFormatter.format(
                   nominalGdpSheet?.main["India"]?.[year] || 0
                 )} Bn`,
                 position: "top",
@@ -858,12 +859,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       },
       annotations: {
         points: (() => {
-          const year = getAnnotationYear(years, gdpPerCapitaSheet);
+          const year = getAnnotationYear(years, gdpPerCapitaSheet.main);
           if (!year) return [];
           return [
             {
               x: year,
-              y: gdpPerCapitaSheet["India"]?.[year] || null,
+              y: gdpPerCapitaSheet.main["India"]?.[year] || null,
               marker: {
                 size: 6,
                 fillColor: "#1e40af",
@@ -871,8 +872,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 radius: 2,
               },
               label: {
-                text: `${year}\n${DollarZeroCurrencyFormatter.format(
-                  gdpPerCapitaSheet["India"]?.[year] || 0
+                text: `${DollarZeroCurrencyFormatter.format(
+                  gdpPerCapitaSheet.main["India"]?.[year] || 0
                 )}`,
                 position: "top",
                 offsetY: -15,
@@ -1389,7 +1390,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: { formatter: (val) => `${Math.round(val)}%` },
       },
       series: seriesData.shareAIS,
-      colors: ["#1E6AAE", "#2492e0", "#5ab9f7"],
+      colors: ["#1E6AAE", "#2492e0", "#5ab3f7"],
       plotOptions: { bar: { horizontal: false, columnWidth: "55%" } },
       annotations: {
         points: (() => {
@@ -1404,7 +1405,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               x: year,
               y: shareAISSheet["Services"]?.[year] || null,
               marker: {
-                size: 6,
+                size: 0,
                 fillColor: "#5ab9f7",
                 strokeColor: "#fff",
                 radius: 2,

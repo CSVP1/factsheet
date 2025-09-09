@@ -184,7 +184,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 color: "#FFFFFF", // White tick labels
               },
               border: {
-                display: false, // Hide y-axis line
+                display: true,
+                color: "#FFFFFF",
+                width: 1,
               },
             },
             y: {
@@ -196,18 +198,24 @@ document.addEventListener("DOMContentLoaded", function () {
               },
               min: 0,
               grid: {
-                display: false,
-                color: "rgba(255, 255, 255, 0.2)", // Light grid lines if enabled
+                display: true, // Changed from 'show' to 'display'
+                drawOnChartArea: true,
+                drawTicks: false, // Do not draw ticks extending outside the axis
+                color: "rgba(255, 255, 255, 0.2)",
+                lineWidth: 1,
+                borderDash: [4, 4], // Replaces strokeDashArray
               },
               ticks: {
                 callback: function (value) {
                   return Math.round(value);
                 },
                 padding: 10,
-                color: "#FFFFFF", // White tick labels
+                color: "#FFFFFF",
               },
               border: {
-                display: false, // Hide y-axis line
+                display: true,
+                color: "#FFFFFF",
+                width: 1,
               },
             },
           },
@@ -585,7 +593,14 @@ document.addEventListener("DOMContentLoaded", function () {
                   font: { size: 14 },
                 },
                 min: 0,
-                grid: { display: false },
+                grid: {
+                  display: true, // Changed from 'show' to 'display'
+                  drawOnChartArea: true,
+                  drawTicks: false, // Do not draw ticks extending outside the axis
+                  color: "#f0f0f0",
+                  lineWidth: 1,
+                  borderDash: [4, 4], // Replaces strokeDashArray
+                },
                 ticks: {
                   callback: function (value) {
                     return Math.round(value);
