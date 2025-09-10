@@ -299,7 +299,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const commonOptions = {
     chart: { type: "line", height: 150, toolbar: { show: false } },
     xaxis: {
-      title: { text: "Year" },
+      title: { text: "Year", offsetY: 5 },
       labels: { style: { colors: "#9ca3af" } },
       axisBorder: { show: false },
       axisTicks: { show: false },
@@ -363,7 +363,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const commonDetailedOptions = {
     chart: { type: "line", height: 400, toolbar: { show: false } },
     xaxis: {
-      title: { text: "Year" },
+      title: { text: "Year", offsetY: 5 },
       labels: { style: { colors: "#9ca3af" } },
       axisBorder: { show: false },
       axisTicks: { show: false },
@@ -1458,7 +1458,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             dashArray: 0,
           },
         },
-        title: { text: "Sensex" },
+        title: { text: "Year", offsetY: 5 },
       },
       yaxis: {
         ...commonOptions.yaxis,
@@ -1575,7 +1575,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             dashArray: 0,
           },
         },
-        title: { text: "Nifty" },
+        title: { text: "Year", offsetY: 5 },
       },
       yaxis: {
         show: true,

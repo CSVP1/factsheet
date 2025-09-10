@@ -1,4 +1,4 @@
-// global indices
+// Global Indices Chart with Chart.js and Dashed Grid Lines
 document.addEventListener("DOMContentLoaded", function () {
   // Global Indices Chart
   const globalChartContainer = document.querySelector("#chart");
@@ -103,15 +103,15 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       const colorPalette = [
-        "#A5B4FC", // Light Indigo
-        "#FBCFE8", // Light Pink
-        "#A7F3D0", // Light Mint
-        "#F9E2AF", // Light Yellow
-        "#BAE6FD", // Light Sky Blue
-        "#FCA5A5", // Light Coral
-        "#D9F99D", // Light Lime
-        "#C4B5FD", // Light Violet
-        "#99F6E4", // Light Teal
+        "#1E6AAE", // Dark Blue
+        "#2492E0", // Medium Blue
+        "#5AB9F7", // Light Blue
+        "#155081", // Dark Teal
+        "#599ac5", // Medium Teal
+        "#7ac8f8", // Light Sky Blue
+        "#5a5a5a", // Dark Gray
+        "#b0b0b0", // Medium Gray
+        "#e5e5e5", // Light Gray
       ];
 
       const initialIndices = ["NASDAQ 100", "NIFTY IT", "BSE IT", "NIFTY"];
@@ -154,9 +154,11 @@ document.addEventListener("DOMContentLoaded", function () {
               enabled: true,
               mode: "index",
               intersect: false,
-              backgroundColor: "rgba(0, 0, 0, 0.8)", // Dark tooltip background for contrast
-              titleColor: "#FFFFFF", // White tooltip title
-              bodyColor: "#FFFFFF", // White tooltip body
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              titleColor: "#FFFFFF",
+              bodyColor: "#FFFFFF",
+              cornerRadius: 6,
+              displayColors: true,
               callbacks: {
                 label: function (context) {
                   const datasetIndex = context.datasetIndex;
@@ -177,15 +179,17 @@ document.addEventListener("DOMContentLoaded", function () {
               title: {
                 display: false,
               },
-              grid: { display: false },
+              grid: {
+                display: false,
+              },
               ticks: {
                 maxTicksLimit: 10,
                 padding: 10,
-                color: "#FFFFFF", // White tick labels
+                color: "#000",
               },
               border: {
                 display: true,
-                color: "#FFFFFF",
+                color: "#000",
                 width: 1,
               },
             },
@@ -194,27 +198,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 display: true,
                 text: "% Growth (Base Adjusted)",
                 font: { size: 14 },
-                color: "#FFFFFF", // White axis title
+                color: "#000",
               },
               min: 0,
               grid: {
-                display: true, // Changed from 'show' to 'display'
+                display: true,
                 drawOnChartArea: true,
-                drawTicks: false, // Do not draw ticks extending outside the axis
-                color: "rgba(255, 255, 255, 0.2)",
+                drawTicks: false,
+                color: "#e8e8e8",
+                borderDash: [8, 4], // Dashed lines: 8px dash, 4px gap
+                borderDashOffset: 2,
+                drawBorder: false,
                 lineWidth: 1,
-                borderDash: [4, 4], // Replaces strokeDashArray
               },
               ticks: {
                 callback: function (value) {
                   return Math.round(value);
                 },
                 padding: 10,
-                color: "#FFFFFF",
+                color: "#000",
               },
               border: {
                 display: true,
-                color: "#FFFFFF",
+                color: "#000",
                 width: 1,
               },
             },
@@ -230,6 +236,14 @@ document.addEventListener("DOMContentLoaded", function () {
               bottom: 20,
               left: 20,
               right: 20,
+            },
+          },
+          elements: {
+            point: {
+              hoverBorderWidth: 2,
+            },
+            line: {
+              borderJoinStyle: "round",
             },
           },
         },
@@ -252,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const label = document.createElement("span");
         label.textContent = dataset.label;
-        label.style.color = "#FFFFFF"; // White legend text
+        label.style.color = "#000";
         label.style.fontSize = "12px";
         label.style.verticalAlign = "middle";
 
@@ -288,7 +302,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// IRR Calculator
+// IRR Calculator with Chart.js and Dashed Grid Lines
 document.addEventListener("DOMContentLoaded", function () {
   $("#start_date, #end_date").datepicker({
     dateFormat: "mm/dd/yy",
@@ -390,52 +404,7 @@ document.addEventListener("DOMContentLoaded", function () {
           data.calculated_irr || "0";
         document.getElementById("exitValue").value =
           data.value_of_investment || "0";
-        /*
 
-        const startYear = new Date(startDate).getFullYear();
-        const endYear = new Date(endDate).getFullYear();
-
-        // Create a definitive list of year labels for the chart's x-axis.
-        const labels = [];
-        for (let year = startYear; year <= endYear; year++) {
-          labels.push(year.toString());
-        }
-
-        const baseAdjustedSeries = data.data.filter(
-          (item) => item.table === "Base Adjusted Values"
-        );
-
-        const actualValuesMap = {};
-        data.data
-          .filter((item) => item.table === "Actual Values")
-          .forEach((indexData) => {
-            actualValuesMap[indexData.indexName] = indexData.historicalData.map(
-              (item) => ({
-                date: item.date,
-                value: parseFloat(item.value) || 0,
-              })
-            );
-          });
-
-        const defaultIndices = ["NASDAQ 100", "NIFTY IT", "BSE IT", "NIFTY"];
-        const initialIndices = [...new Set([index, ...defaultIndices])];
-
-        const datasets = baseAdjustedSeries.map((indexData, i) => {
-          // Create a map of year -> value for the current index.
-          const valueMap = new Map();
-          indexData.historicalData.forEach((item) => {
-            const year = item.date.split("-")[2];
-            valueMap.set(year, parseFloat(item.value) || 0);
-          });
-
-          // Build the dataset's data array against the definitive `labels`.
-          const filteredData = labels.map((year) => valueMap.get(year) ?? null);
-
-          const isSelectedIndex = indexData.indexName === index;
-          return {
-            label: indexData.indexName,
-            data: filteredData,
-*/
         const baseAdjusted = data.data.find(
           (item) => item.table === "Base Adjusted Values"
         );
@@ -480,16 +449,17 @@ document.addEventListener("DOMContentLoaded", function () {
               label: indexData.indexName,
               data: dataSlice.map((item) => parseFloat(item.value) || 0),
               borderColor: isSelectedIndex
-                ? "#4FC3F7"
+                ? "#1E6AAE"
                 : [
-                    "#81D4FA",
-                    "#B3E5FC",
-                    "#90CAF9",
-                    "#42A5F5",
-                    "#B0BEC5",
-                    "#80DEEA",
-                    "#4DD0E1",
-                    "#26C6DA",
+                    "#1E6AAE", // Dark Blue
+                    "#2492E0", // Medium Blue
+                    "#5AB9F7", // Light Blue
+                    "#155081", // Dark Teal
+                    "#599ac5", // Medium Teal
+                    "#7ac8f8", // Light Sky Blue
+                    "#5a5a5a", // Dark Gray
+                    "#b0b0b0", // Medium Gray
+                    "#e5e5e5", // Light Gray
                   ][i % 8],
               backgroundColor: "transparent",
               borderWidth: isSelectedIndex ? 4 : 2,
@@ -498,28 +468,27 @@ document.addEventListener("DOMContentLoaded", function () {
               pointRadius: 3,
               pointHoverRadius: 6,
               pointBackgroundColor: isSelectedIndex
-                ? "#4FC3F7"
+                ? "#1E6AAE"
                 : [
-                    "#81D4FA",
-                    "#B3E5FC",
-                    "#90CAF9",
-                    "#42A5F5",
-                    "#B0BEC5",
-                    "#80DEEA",
-                    "#4DD0E1",
-                    "#26C6DA",
+                    "#5AB9F7", // Light Blue
+                    "#155081", // Dark Teal
+                    "#599ac5", // Medium Teal
+                    "#7ac8f8", // Light Sky Blue
+                    "#5a5a5a", // Dark Gray
+                    "#b0b0b0", // Medium Gray
+                    "#e5e5e5", // Light Gray
                   ][i % 8],
               pointBorderColor: isSelectedIndex
-                ? "#4FC3F7"
+                ? "#1E6AAE"
                 : [
-                    "#81D4FA",
-                    "#B3E5FC",
-                    "#90CAF9",
-                    "#42A5F5",
-                    "#B0BEC5",
-                    "#80DEEA",
-                    "#4DD0E1",
-                    "#26C6DA",
+                    "#2492E0", // Medium Blue
+                    "#5AB9F7", // Light Blue
+                    "#155081", // Dark Teal
+                    "#599ac5", // Medium Teal
+                    "#7ac8f8", // Light Sky Blue
+                    "#5a5a5a", // Dark Gray
+                    "#b0b0b0", // Medium Gray
+                    "#e5e5e5", // Light Gray
                   ][i % 8],
               pointBorderWidth: 1,
               pointStyle: "circle",
@@ -548,6 +517,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 enabled: true,
                 mode: "index",
                 intersect: false,
+                backgroundColor: "rgba(0, 0, 0, 0.8)",
+                titleColor: "#FFFFFF",
+                bodyColor: "#FFFFFF",
+                cornerRadius: 6,
+                displayColors: true,
                 callbacks: {
                   title: function (tooltipItems) {
                     // Display the year from the x-axis label
@@ -580,10 +554,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 title: {
                   display: false,
                 },
-                grid: { display: false },
+                grid: {
+                  display: false,
+                },
                 ticks: {
                   maxTicksLimit: 10,
                   padding: 10,
+                  color: "#000",
+                },
+                border: {
+                  display: true,
+                  color: "#000",
+                  width: 1,
                 },
               },
               y: {
@@ -591,21 +573,30 @@ document.addEventListener("DOMContentLoaded", function () {
                   display: true,
                   text: "% Growth (Base Adjusted)",
                   font: { size: 14 },
+                  color: "#000",
                 },
                 min: 0,
                 grid: {
-                  display: true, // Changed from 'show' to 'display'
+                  display: true,
                   drawOnChartArea: true,
-                  drawTicks: false, // Do not draw ticks extending outside the axis
-                  color: "#f0f0f0",
+                  drawTicks: false,
+                  color: "#e8e8e8",
+                  borderDash: [6, 3], // Dashed lines: 6px dash, 3px gap
+                  borderDashOffset: 1,
                   lineWidth: 1,
-                  borderDash: [4, 4], // Replaces strokeDashArray
+                  drawBorder: false,
                 },
                 ticks: {
                   callback: function (value) {
                     return Math.round(value);
                   },
                   padding: 10,
+                  color: "#000",
+                },
+                border: {
+                  display: true,
+                  color: "#000",
+                  width: 1,
                 },
               },
             },
@@ -620,6 +611,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 bottom: 20,
                 left: 20,
                 right: 20,
+              },
+            },
+            elements: {
+              point: {
+                hoverBorderWidth: 2,
+              },
+              line: {
+                borderJoinStyle: "round",
               },
             },
           },
@@ -640,7 +639,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           const label = document.createElement("span");
           label.textContent = dataset.label;
-          label.style.color = "#333";
+          label.style.color = "#000";
           label.style.fontSize = "12px";
           label.style.verticalAlign = "middle";
 
