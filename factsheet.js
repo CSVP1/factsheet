@@ -1766,6 +1766,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
       const viewMoreBtn = card.querySelector(".view-more-details");
       const popup = card.querySelector(".detailed-graph");
+      const overlay = card.querySelector(".overlay");
+
       if (!viewMoreBtn || !popup) {
         return;
       }
@@ -1798,6 +1800,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       function handleViewMoreClick(e) {
         e.preventDefault();
         popup.style.display = "flex";
+        overlay.style.display = "block";
         const container = document.getElementById(chartId);
         if (!container) {
           return;
@@ -1822,6 +1825,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       function handleCloseClick(e) {
         e.preventDefault();
         popup.style.display = "none";
+        overlay.style.display = "none";
         const detailedChart = ApexCharts.getChartByID(chartId);
         if (detailedChart) {
           detailedChart.destroy();
@@ -1834,6 +1838,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       function handleBackgroundClick(e) {
         if (e.target === popup) {
           popup.style.display = "none";
+          overlay.style.display = "none";
           const detailedChart = ApexCharts.getChartByID(chartId);
           if (detailedChart) {
             detailedChart.destroy();
