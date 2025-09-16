@@ -279,13 +279,25 @@ document.addEventListener("DOMContentLoaded", function () {
         colorIndicator.style.marginRight = "5px";
         colorIndicator.style.verticalAlign = "middle";
 
-        checkbox.addEventListener("change", () => {
+        const toggleDataset = (useCheckboxState) => {
           const meta = chart.getDatasetMeta(index);
-          meta.hidden = !checkbox.checked;
+          meta.hidden = !useCheckboxState;
           chart.update();
           console.log(
             `Toggled visibility for ${dataset.label}: ${!meta.hidden}`
           );
+        };
+
+        checkbox.addEventListener("change", (event) => {
+          event.stopPropagation();
+          toggleDataset(checkbox.checked);
+        });
+
+        legendItem.addEventListener("click", (event) => {
+          if (event.target !== checkbox) {
+            checkbox.checked = !checkbox.checked;
+            toggleDataset(checkbox.checked);
+          }
         });
 
         legendItem.appendChild(checkbox);
@@ -652,19 +664,31 @@ document.addEventListener("DOMContentLoaded", function () {
           colorIndicator.style.marginRight = "5px";
           colorIndicator.style.verticalAlign = "middle";
 
-          checkbox.addEventListener("change", () => {
+          const toggleDataset = (useCheckboxState) => {
             const meta = chartInstance.getDatasetMeta(idx);
-            meta.hidden = !checkbox.checked;
+            meta.hidden = !useCheckboxState;
             chartInstance.update();
             console.log(
               `Toggled visibility for ${dataset.label}: ${!meta.hidden}`
             );
+          };
+
+          checkbox.addEventListener("change", (event) => {
+            event.stopPropagation(); // Prevent legendItem click from firing
+            toggleDataset(checkbox.checked);
+          });
+
+          legendItem.addEventListener("click", (event) => {
+            if (event.target !== checkbox) {
+              checkbox.checked = !checkbox.checked; // Toggle checkbox state
+              toggleDataset(checkbox.checked);
+            }
           });
 
           legendItem.appendChild(checkbox);
           legendItem.appendChild(colorIndicator);
-          legendItem.appendChild(label);
           customLegendContainer.appendChild(legendItem);
+          legendItem.appendChild(label);
         });
 
         console.log("Custom legend generated");

@@ -482,7 +482,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         // need to check for all after approval
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -498,13 +498,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: {
           show: false, // Hide Y-axis labels
           style: {
-            colors: ["#777"],
+            colors: ["#333"],
             fontSize: "12px",
           },
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -632,7 +632,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -648,13 +648,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: {
           show: false, // Hide Y-axis labels
           style: {
-            colors: ["#777"],
+            colors: ["#333"],
             fontSize: "12px",
           },
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -769,7 +769,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -785,13 +785,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: {
           show: false, // Hide Y-axis labels
           style: {
-            colors: ["#777"],
+            colors: ["#333"],
             fontSize: "12px",
           },
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -972,7 +972,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -991,13 +991,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: {
           show: false, // Hide Y-axis labels
           style: {
-            colors: ["#777"],
+            colors: ["#333"],
             fontSize: "12px",
           },
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -1146,7 +1146,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         categories: bondYears,
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         tooltip: {
           enabled: true,
@@ -1173,13 +1173,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: {
           show: false, // Hide Y-axis labels
           style: {
-            colors: ["#777"],
+            colors: ["#333"],
             fontSize: "12px",
           },
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -1273,7 +1273,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -1292,13 +1292,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: {
           show: false, // Hide Y-axis labels
           style: {
-            colors: ["#777"],
+            colors: ["#333"],
             fontSize: "12px",
           },
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -1338,7 +1338,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   2
                 )}`,
                 position: "top",
-                offsetY: -15,
+                offsetY: 2,
                 style: {
                   color: "#1e40af",
                   background: "#fff",
@@ -1375,7 +1375,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         categories: shareAISYears,
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
       },
       yaxis: {
@@ -1384,7 +1384,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         max: 70,
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         tickAmount: 7,
         labels: { formatter: (val) => `${Math.round(val)}%` },
@@ -1448,7 +1448,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -1466,13 +1466,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: {
           show: false, // Hide Y-axis labels
           style: {
-            colors: ["#777"],
+            colors: ["#333"],
             fontSize: "12px",
           },
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -1565,7 +1565,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -1582,13 +1582,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: {
           show: false, // Hide Y-axis labels
           style: {
-            colors: ["#777"],
+            colors: ["#333"],
             fontSize: "12px",
           },
         },
         axisBorder: {
           show: true,
-          color: "#777",
+          color: "#333",
         },
         crosshairs: {
           show: true,
@@ -1865,7 +1865,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           axisTicks: { show: false },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           categories: years,
           tooltip: {
@@ -1885,7 +1885,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           title: { text: "India" },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           crosshairs: {
             show: true,
@@ -1991,7 +1991,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           labels: { style: { colors: "#9ca3af" } },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           axisTicks: { show: false },
           categories: realGdpYears,
@@ -2012,7 +2012,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           title: { text: "India" },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           crosshairs: {
             show: true,
@@ -2113,7 +2113,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           labels: { style: { colors: "#9ca3af" } },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           axisTicks: { show: false },
           categories: years,
@@ -2134,7 +2134,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           title: { text: "India" },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           crosshairs: {
             show: true,
@@ -2234,7 +2234,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           labels: { style: { colors: "#9ca3af" } },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           axisTicks: { show: false },
           categories: countries,
@@ -2246,7 +2246,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           max: 2000,
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           labels: {
             formatter: (val) => `${Formatter.format(val)}`,
@@ -2323,7 +2323,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           labels: { style: { colors: "#9ca3af" } },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           axisTicks: { show: false },
           categories: unemploymentYears,
@@ -2345,7 +2345,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           max: 10,
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           labels: { formatter: (val) => `${val.toFixed(1)}%` },
         },
@@ -2417,7 +2417,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           labels: { style: { colors: "#9ca3af" } },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           axisTicks: { show: false },
           categories: bondYears,
@@ -2440,7 +2440,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           max: 15,
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           labels: { formatter: (val) => `${val.toFixed(1)}%` },
         },
@@ -2515,7 +2515,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           labels: { style: { colors: "#9ca3af" } },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           axisTicks: { show: false },
           categories: merchandiseYears,
@@ -2537,7 +2537,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           max: 750,
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
         },
         grid: {
@@ -2842,7 +2842,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           labels: { style: { colors: "#9ca3af" } },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           axisTicks: { show: false },
           categories: medianAgeYears,
@@ -2865,7 +2865,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           title: { text: "Median Age" },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           labels: { formatter: (val) => `${Math.round(val)}` },
         },
@@ -2940,7 +2940,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           labels: { style: { colors: "#9ca3af" } },
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           axisTicks: { show: false },
           categories: inflationYears,
@@ -2963,7 +2963,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           max: 20,
           axisBorder: {
             show: true,
-            color: "#777",
+            color: "#333",
           },
           labels: { formatter: (val) => `${Math.round(val)}%` },
         },
