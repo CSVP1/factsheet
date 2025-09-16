@@ -417,6 +417,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("exitValue").value =
           data.value_of_investment || "0";
 
+        // // Ensure comparisonGraph has relative positioning for absolute overlay
+        comparisonGraph.style.position = "relative";
+
         const baseAdjusted = data.data.find(
           (item) => item.table === "Base Adjusted Values"
         );
@@ -512,6 +515,12 @@ document.addEventListener("DOMContentLoaded", function () {
           chartInstance.destroy();
         }
 
+        // // Remove existing overlay if it exists
+        const existingOverlay = comparisonGraph.querySelector(".irr-overlay");
+        if (existingOverlay) {
+          existingOverlay.remove();
+        }
+
         chartInstance = new Chart(ctx, {
           type: "line",
           data: {
@@ -545,18 +554,29 @@ document.addEventListener("DOMContentLoaded", function () {
                       context.parsed.y
                     )}`;
                   },
+                  // },
+                  // // Add tooltip event listeners
+                  // external: function (context) {
+                  //   // Update overlay when tooltip is shown
+                  //   if (context.tooltip.opacity > 0) {
+                  //     updateOverlayValues(context.tooltip.dataPoints);
+                  //   } else {
+                  //     // Reset to default values when tooltip is hidden
+                  //     updateOverlayValues();
+                  //   }
                   footer: function () {
                     // Display IRR and Exit Value once in the footer
                     const irrResult =
                       document.getElementById("irr-result").value || "0";
                     const exitValue =
                       document.getElementById("exitValue").value || "0";
+                    // // updateOverlayValues(parseFloat(irrResult).toFixed(2));
 
-                    return [
-                      "-----------------------",
-                      `IRR: ${parseFloat(irrResult).toFixed(2)}%`,
-                      `Exit Value: ${parseFloat(exitValue).toFixed(2)}`,
-                    ];
+                    // return [
+                    //   "-----------------------",
+                    //   `IRR: ${parseFloat(irrResult).toFixed(2)}%`,
+                    //   `Exit Value: ${parseFloat(exitValue).toFixed(2)}`,
+                    // ];
                   },
                 },
               },
@@ -635,6 +655,83 @@ document.addEventListener("DOMContentLoaded", function () {
             },
           },
         });
+
+        // // Create overlay elements for IRR and Exit Value in top right corner
+        const overlayContainer = document.createElement("div");
+        overlayContainer.className = "irr-overlay";
+        overlayContainer.style.position = "absolute";
+        overlayContainer.style.top = "10px";
+        overlayContainer.style.right = "50px";
+        overlayContainer.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+        overlayContainer.style.padding = "10px 15px";
+        overlayContainer.style.borderRadius = "6px";
+        overlayContainer.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.1)";
+        overlayContainer.style.fontSize = "12px";
+        overlayContainer.style.fontWeight = "500";
+        overlayContainer.style.zIndex = "1000";
+        overlayContainer.style.minWidth = "150px";
+        overlayContainer.style.display = "flex";
+        overlayContainer.style.gap = "10px";
+
+        const irrDisplay = document.createElement("div");
+        irrDisplay.style.marginBottom = "5px";
+        irrDisplay.style.color = "#1E6AAE";
+        irrDisplay.innerHTML = `<strong>IRR: <span id="irr-display">0.00%</span></strong>`;
+
+        const exitValueDisplay = document.createElement("div");
+        exitValueDisplay.style.color = "#1E6AAE";
+        exitValueDisplay.innerHTML = `<strong>Exit Value: <span id="exit-value-display">0.00</span></strong>`;
+
+        overlayContainer.appendChild(irrDisplay);
+        overlayContainer.appendChild(exitValueDisplay);
+        comparisonGraph.appendChild(overlayContainer);
+
+        // Function to update overlay values based on tooltip data
+        const updateOverlayValues = (tooltipData = null) => {
+          const irrDisplayElement =
+            overlayContainer.querySelector("#irr-display");
+          const exitValueDisplayElement = overlayContainer.querySelector(
+            "#exit-value-display"
+          );
+
+          if (tooltipData && tooltipData.length > 0) {
+            // Show values from hovered tooltip
+            const selectedIndex = tooltipData.find(
+              (item) => item.dataset.label === index
+            );
+            if (selectedIndex) {
+              const hoveredValue = Math.round(selectedIndex.parsed.y);
+              if (irrDisplayElement) {
+                irrDisplayElement.textContent = `${hoveredValue}%`;
+              }
+              if (exitValueDisplayElement) {
+                // Calculate exit value based on hovered percentage
+                const amount = parseFloat(
+                  document.getElementById("amount").value || "0"
+                );
+                const exitValue = amount * (hoveredValue / 100);
+                exitValueDisplayElement.textContent = exitValue.toFixed(2);
+              }
+            }
+          } else {
+            // Show default values (current year/final values)
+            const irrValue = document.getElementById("irr-result").value || "0";
+            const exitValue = document.getElementById("exitValue").value || "0";
+
+            if (irrDisplayElement) {
+              irrDisplayElement.textContent = `${parseFloat(irrValue).toFixed(
+                2
+              )}%`;
+            }
+            if (exitValueDisplayElement) {
+              exitValueDisplayElement.textContent =
+                parseFloat(exitValue).toFixed(2);
+            }
+          }
+        };
+
+        // // Update overlay values initially with default values
+        updateOverlayValues();
 
         datasets.forEach((dataset, idx) => {
           const legendItem = document.createElement("div");

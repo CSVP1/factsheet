@@ -361,7 +361,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Common ApexCharts options for the detailed view charts in popups (for 'View More' popups)
   const commonDetailedOptions = {
-    chart: { type: "line", height: 400, toolbar: { show: false } },
+    chart: {
+      type: "line",
+      height: 400,
+      toolbar: { show: false },
+      animations: {
+        enabled: true,
+        easing: "easeinout",
+        speed: 800,
+        animateGradually: {
+          enabled: true,
+          delay: 150,
+        },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 350,
+        },
+      },
+    },
     xaxis: {
       title: { text: "Year", offsetY: 5 },
       labels: { style: { colors: "#9ca3af" } },
@@ -399,6 +416,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       strokeWidth: 2,
       strokeColors: "#ffffff",
       hover: { size: 6, sizeOffset: 3 },
+      animation: {
+        enabled: true,
+        speed: 1000,
+        delay: 0,
+      },
     },
     dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
     tooltip: {
@@ -596,7 +618,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   nominalGdpSheet?.main["India"]?.[year] || 0
                 )} Bn`,
                 position: "top",
-                offsetY: -15,
+                offsetY: 2,
                 style: {
                   color: "#1e40af",
                   background: "#fff",
@@ -876,7 +898,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   gdpPerCapitaSheet.main["India"]?.[year] || 0
                 )}`,
                 position: "top",
-                offsetY: -15,
+                offsetY: 2,
                 style: {
                   color: "#1e40af",
                   background: "#fff",
@@ -1087,7 +1109,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   2
                 )}%`,
                 position: "top",
-                offsetY: -15,
+                offsetY: 2,
                 style: {
                   color: "#1e40af",
                   background: "#fff",
@@ -1225,7 +1247,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   2
                 )}%`,
                 position: "top",
-                offsetY: -15,
+                offsetY: 2,
                 style: {
                   color: "#1e40af",
                   background: "#fff",
@@ -1330,7 +1352,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               marker: {
                 size: 6,
                 fillColor: "#1e40af",
-                strokeColor: "#fff",
+                strokeColor: "#1e40af",
                 radius: 2,
               },
               label: {
@@ -1391,7 +1413,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       },
       series: seriesData.shareAIS,
       colors: ["#1E6AAE", "#2492e0", "#5ab3f7"],
-      plotOptions: { bar: { horizontal: false, columnWidth: "55%" } },
+      plotOptions: {
+        bar: { horizontal: false, columnWidth: "55%", borderRadius: 2 },
+      },
       annotations: {
         points: (() => {
           const year = getAnnotationYear(
@@ -1413,7 +1437,8 @@ document.addEventListener("DOMContentLoaded", async function () {
               label: {
                 text: `${(shareAISSheet["Services"]?.[year] || 0).toFixed(2)}%`,
                 position: "top",
-                offsetY: -15,
+                offsetX: 15,
+                offsetY: 2,
                 style: {
                   color: "#5ab9f7",
                   background: "#fff",
@@ -1529,7 +1554,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   2
                 )}`,
                 position: "top",
-                offsetY: -15,
+                offsetY: 2,
                 style: {
                   color: "#1e40af",
                   background: "#fff",
@@ -1645,7 +1670,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   2
                 )}`,
                 position: "top",
-                offsetY: -15,
+                offsetY: 2,
                 style: {
                   color: "#0077B6",
                   background: "#fff",
@@ -1690,7 +1715,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   medianAgeSheet["India"]?.[year] || 0
                 ).toFixed(2)}`,
                 position: "top",
-                offsetY: -15,
+                offsetY: 2,
                 style: {
                   color: "#1e40af",
                   background: "#fff",
@@ -1735,7 +1760,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   inflationRateSheet["India"]?.[year] || 0
                 ).toFixed(2)}%`,
                 position: "top",
-                offsetY: -15,
+                offsetY: 2,
                 style: {
                   color: "#1e40af",
                   background: "#fff",
@@ -1858,6 +1883,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedNominalGdpChart",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 1200,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Year" },
@@ -1985,6 +2023,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedrealGDPGrowth",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 1200,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Year" },
@@ -2107,6 +2158,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedgdpPerCapita",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 1200,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Year" },
@@ -2228,6 +2292,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedPopulationChart",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 1200,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Country" },
@@ -2317,6 +2394,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedUnemploymentRateChart",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 1200,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Year" },
@@ -2411,6 +2501,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedGovernmentBondChart",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 1200,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Year" },
@@ -2509,6 +2612,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedMerchandiseChart",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 1200,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Year" },
@@ -2594,6 +2710,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedAgricultureChart",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 1200,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Year" },
@@ -2669,6 +2798,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedAnnualReturnsChart-sensex",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 1200,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Sensex" },
@@ -2753,6 +2895,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedAnnualReturnsChart-nifty",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 1200,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Nifty" },
@@ -2836,6 +2991,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedMedianAge",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 1200,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Year" },
@@ -2934,6 +3102,19 @@ document.addEventListener("DOMContentLoaded", async function () {
           height: 400,
           toolbar: { show: false },
           id: "detailedInflationRate",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 800,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
         },
         xaxis: {
           title: { text: "Year" },
