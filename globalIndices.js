@@ -1,4 +1,4 @@
-// Global Indices Chart with Chart.js and Dashed Grid Lines
+// Global Indices Chart with ApexCharts and Dashed Grid Lines
 document.addEventListener("DOMContentLoaded", function () {
   // Global Indices Chart
   const globalChartContainer = document.querySelector("#chart");
@@ -18,13 +18,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   legendContainer.innerHTML = "";
 
-  const globalChartCanvas = document.createElement("canvas");
-  globalChartCanvas.id = "global-indices-chart";
-  globalChartContainer.insertBefore(globalChartCanvas, legendContainer);
+  const globalChartDiv = document.createElement("div");
+  globalChartDiv.id = "global-indices-chart";
+  globalChartContainer.insertBefore(globalChartDiv, legendContainer);
 
-  if (typeof Chart === "undefined") {
+  if (typeof ApexCharts === "undefined") {
     console.error(
-      "Chart.js library is not loaded. Please include the Chart.js script in your HTML."
+      "ApexCharts library is not loaded. Please include the ApexCharts script in your HTML."
     );
     return;
   }
@@ -116,142 +116,166 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const initialIndices = ["NASDAQ 100", "NIFTY IT", "BSE IT", "NIFTY"];
 
-      const datasets = indices.map((indexData, i) => ({
-        label: indexData.name,
+      const series = indices.map((indexData, i) => ({
+        name: indexData.name,
         data: indexData.data,
-        borderColor: colorPalette[i % colorPalette.length],
-        backgroundColor: "transparent",
-        borderWidth: 2,
-        fill: false,
-        tension: 0.1,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        pointHitRadius: 7,
-        pointBackgroundColor: colorPalette[i % colorPalette.length],
-        pointHoverBackgroundColor: colorPalette[i % colorPalette.length],
-        pointBorderColor: colorPalette[i % colorPalette.length],
-        pointBorderWidth: 0,
-        pointStyle: "circle",
-        hidden: !initialIndices.includes(indexData.name),
+        color: colorPalette[i % colorPalette.length],
+        type: "line",
+        lineWidth: 2,
+        marker: {
+          size: 5,
+          strokeWidth: 0,
+          fillColors: [colorPalette[i % colorPalette.length]],
+          hover: {
+            size: 7,
+            sizeOffset: 2,
+          },
+        },
+        stroke: {
+          curve: "straight",
+          width: 2,
+        },
+        fill: {
+          type: "solid",
+          opacity: 0,
+        },
       }));
 
-      console.log("Datasets prepared:", datasets);
+      console.log("Series prepared:", series);
 
-      const chart = new Chart(globalChartCanvas, {
-        type: "line",
-        data: {
-          labels: dates,
-          datasets: datasets,
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false,
-            },
-            tooltip: {
-              enabled: true,
-              mode: "index",
-              intersect: false,
-              backgroundColor: "rgba(0, 0, 0, 0.8)",
-              titleColor: "#FFFFFF",
-              bodyColor: "#FFFFFF",
-              cornerRadius: 6,
-              displayColors: true,
-              callbacks: {
-                label: function (context) {
-                  const datasetIndex = context.datasetIndex;
-                  const dataIndex = context.dataIndex;
-                  const indexName = context.dataset.label;
-                  const baseAdjustedValue = context.dataset.data[dataIndex];
-                  return `${indexName}: ${
-                    baseAdjustedValue !== null
-                      ? baseAdjustedValue.toFixed(2)
-                      : "N/A"
-                  }`;
-                },
-              },
-            },
+      const chartOptions = {
+        series: series,
+        chart: {
+          type: "line",
+          height: 350,
+          toolbar: {
+            show: false,
           },
-          scales: {
-            x: {
-              title: {
-                display: false,
-              },
-              grid: {
-                display: false,
-              },
-              ticks: {
-                maxTicksLimit: 10,
-                padding: 10,
-                color: "#000",
-              },
-              border: {
-                display: true,
-                color: "#000",
-                width: 1,
-              },
-            },
-            y: {
-              title: {
-                display: true,
-                text: "% Growth (Base Adjusted)",
-                font: { size: 14 },
-                color: "#000",
-              },
-              min: 0,
-              grid: {
-                display: true,
-                drawOnChartArea: true,
-                drawTicks: false,
-                color: "#e8e8e8",
-                borderDash: [8, 4], // Dashed lines: 8px dash, 4px gap
-                borderDashOffset: 2,
-                drawBorder: false,
-                lineWidth: 1,
-              },
-              ticks: {
-                callback: function (value) {
-                  return Math.round(value);
-                },
-                padding: 10,
-                color: "#000",
-              },
-              border: {
-                display: true,
-                color: "#000",
-                width: 1,
-              },
-            },
-          },
-          interaction: {
-            mode: "nearest",
-            axis: "x",
-            intersect: false,
-          },
-          layout: {
-            padding: {
-              top: 20,
-              bottom: 20,
-              left: 20,
-              right: 20,
-            },
-          },
-          elements: {
-            point: {
-              hoverBorderWidth: 2,
-            },
-            line: {
-              borderJoinStyle: "round",
-            },
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 800,
           },
         },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: "straight",
+          width: 2,
+        },
+        xaxis: {
+          categories: dates,
+          labels: {
+            style: {
+              colors: "#000",
+              fontSize: "12px",
+            },
+            maxHeight: 30,
+          },
+          axisBorder: {
+            show: true,
+            color: "#000",
+          },
+          axisTicks: {
+            show: false,
+          },
+          grid: {
+            show: false,
+          },
+        },
+        yaxis: {
+          title: {
+            text: "% Growth (Base Adjusted)",
+            style: {
+              color: "#000",
+              fontSize: "14px",
+            },
+          },
+          min: 0,
+          labels: {
+            style: {
+              colors: "#000",
+              fontSize: "12px",
+            },
+            formatter: function (value) {
+              return Math.round(value);
+            },
+          },
+          axisBorder: {
+            show: true,
+            color: "#000",
+            width: 1,
+          },
+          grid: {
+            show: true,
+            strokeDashArray: [8, 4],
+            color: "#e8e8e8",
+            strokeWidth: 1,
+          },
+        },
+        tooltip: {
+          enabled: true,
+          shared: true,
+          intersect: false,
+          style: {
+            fontSize: "12px",
+          },
+          custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+            const indexName = w.globals.seriesNames[seriesIndex];
+            const value = series[seriesIndex][dataPointIndex];
+            return `
+              <div style="background: rgba(0, 0, 0, 0.8); color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px;">
+                <div style="margin-bottom: 4px;">
+                  <span style="color: ${
+                    w.globals.colors[seriesIndex]
+                  }; font-weight: bold;">●</span>
+                  ${indexName}: ${value !== null ? value.toFixed(2) : "N/A"}
+                </div>
+              </div>
+            `;
+          },
+        },
+        legend: {
+          show: false,
+        },
+        grid: {
+          show: true,
+          strokeDashArray: [8, 4],
+          position: "back",
+          xaxis: {
+            lines: {
+              show: false,
+            },
+          },
+          yaxis: {
+            lines: {
+              show: true,
+            },
+          },
+        },
+        markers: {
+          size: 5,
+          strokeWidth: 0,
+          hover: {
+            size: 7,
+            sizeOffset: 2,
+          },
+        },
+      };
+
+      const chart = new ApexCharts(globalChartDiv, chartOptions);
+      chart.render();
+      // Hide series that are not in initialIndices after chart is rendered
+      chart.w.globals.seriesNames.forEach((seriesName, index) => {
+        if (!initialIndices.includes(seriesName)) {
+          chart.hideSeries(seriesName);
+        }
       });
 
       console.log("Chart initialized successfully");
 
-      datasets.forEach((dataset, index) => {
+      series.forEach((seriesData, index) => {
         const legendItem = document.createElement("div");
         legendItem.style.display = "inline-block";
         legendItem.style.margin = "0 10px";
@@ -259,13 +283,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        checkbox.checked = !dataset.hidden;
+        checkbox.checked = initialIndices.includes(seriesData.name);
         checkbox.style.marginRight = "5px";
         checkbox.style.verticalAlign = "middle";
-        checkbox.style.accentColor = dataset.borderColor;
+        checkbox.style.accentColor = seriesData.color;
 
         const label = document.createElement("span");
-        label.textContent = dataset.label;
+        label.textContent = seriesData.name;
         label.style.color = "#000";
         label.style.fontSize = "12px";
         label.style.verticalAlign = "middle";
@@ -274,29 +298,31 @@ document.addEventListener("DOMContentLoaded", function () {
         colorIndicator.style.display = "inline-block";
         colorIndicator.style.width = "12px";
         colorIndicator.style.height = "12px";
-        colorIndicator.style.backgroundColor = dataset.borderColor;
+        colorIndicator.style.backgroundColor = seriesData.color;
         colorIndicator.style.borderRadius = "50%";
         colorIndicator.style.marginRight = "5px";
         colorIndicator.style.verticalAlign = "middle";
 
-        const toggleDataset = (useCheckboxState) => {
-          const meta = chart.getDatasetMeta(index);
-          meta.hidden = !useCheckboxState;
-          chart.update();
+        const toggleSeries = (useCheckboxState) => {
+          if (useCheckboxState) {
+            chart.showSeries(seriesData.name);
+          } else {
+            chart.hideSeries(seriesData.name);
+          }
           console.log(
-            `Toggled visibility for ${dataset.label}: ${!meta.hidden}`
+            `Toggled visibility for ${seriesData.name}: ${useCheckboxState}`
           );
         };
 
         checkbox.addEventListener("change", (event) => {
           event.stopPropagation();
-          toggleDataset(checkbox.checked);
+          toggleSeries(checkbox.checked);
         });
 
         legendItem.addEventListener("click", (event) => {
           if (event.target !== checkbox) {
             checkbox.checked = !checkbox.checked;
-            toggleDataset(checkbox.checked);
+            toggleSeries(checkbox.checked);
           }
         });
 
@@ -314,7 +340,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// IRR Calculator with Chart.js and Dashed Grid Lines
+// IRR Calculator with ApexCharts and Dashed Grid Lines
 document.addEventListener("DOMContentLoaded", function () {
   $("#start_date, #end_date").datepicker({
     dateFormat: "mm/dd/yy",
@@ -349,16 +375,16 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  const ctx = document.createElement("canvas");
-  ctx.id = "irr-chart";
-  comparisonGraph.insertBefore(ctx, customLegendContainer);
+  const chartDiv = document.createElement("div");
+  chartDiv.id = "irr-chart";
+  comparisonGraph.insertBefore(chartDiv, customLegendContainer);
 
   comparisonGraph.classList.add("hide");
   let chartInstance = null;
 
-  if (typeof Chart === "undefined") {
+  if (typeof ApexCharts === "undefined") {
     console.error(
-      "Chart.js library is not loaded. Please include the Chart.js script in your HTML."
+      "ApexCharts library is not loaded. Please include the ApexCharts script in your HTML."
     );
     return;
   }
@@ -451,7 +477,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const defaultIndices = ["NASDAQ 100", "NIFTY IT", "BSE IT", "NIFTY"];
         const initialIndices = [...new Set([index, ...defaultIndices])];
 
-        const datasets = data.data
+        const series = data.data
           .filter((item) => item.table === "Base Adjusted Values")
           .map((indexData, i) => {
             const isSelectedIndex = indexData.indexName === index;
@@ -461,9 +487,9 @@ document.addEventListener("DOMContentLoaded", function () {
               displayLabels.length
             );
             return {
-              label: indexData.indexName,
+              name: indexData.indexName,
               data: dataSlice.map((item) => parseFloat(item.value) || 0),
-              borderColor: isSelectedIndex
+              color: isSelectedIndex
                 ? "#1E6AAE"
                 : [
                     "#1E6AAE", // Dark Blue
@@ -476,38 +502,37 @@ document.addEventListener("DOMContentLoaded", function () {
                     "#b0b0b0", // Medium Gray
                     "#e5e5e5", // Light Gray
                   ][i % 8],
-              backgroundColor: "transparent",
-              borderWidth: isSelectedIndex ? 4 : 2,
-              fill: false,
-              tension: 0,
-              pointRadius: 3,
-              pointHoverRadius: 6,
-              pointBackgroundColor: isSelectedIndex
-                ? "#1E6AAE"
-                : [
-                    "#5AB9F7", // Light Blue
-                    "#155081", // Dark Teal
-                    "#599ac5", // Medium Teal
-                    "#7ac8f8", // Light Sky Blue
-                    "#5a5a5a", // Dark Gray
-                    "#b0b0b0", // Medium Gray
-                    "#e5e5e5", // Light Gray
-                  ][i % 8],
-              pointBorderColor: isSelectedIndex
-                ? "#1E6AAE"
-                : [
-                    "#2492E0", // Medium Blue
-                    "#5AB9F7", // Light Blue
-                    "#155081", // Dark Teal
-                    "#599ac5", // Medium Teal
-                    "#7ac8f8", // Light Sky Blue
-                    "#5a5a5a", // Dark Gray
-                    "#b0b0b0", // Medium Gray
-                    "#e5e5e5", // Light Gray
-                  ][i % 8],
-              pointBorderWidth: 1,
-              pointStyle: "circle",
-              hidden: !initialIndices.includes(indexData.indexName),
+              type: "line",
+              lineWidth: isSelectedIndex ? 4 : 2,
+              marker: {
+                size: 3,
+                strokeWidth: 0,
+                fillColors: [
+                  isSelectedIndex
+                    ? "#1E6AAE"
+                    : [
+                        "#5AB9F7", // Light Blue
+                        "#155081", // Dark Teal
+                        "#599ac5", // Medium Teal
+                        "#7ac8f8", // Light Sky Blue
+                        "#5a5a5a", // Dark Gray
+                        "#b0b0b0", // Medium Gray
+                        "#e5e5e5", // Light Gray
+                      ][i % 8],
+                ],
+                hover: {
+                  size: 6,
+                  sizeOffset: 3,
+                },
+              },
+              stroke: {
+                curve: "straight",
+                width: isSelectedIndex ? 4 : 2,
+              },
+              fill: {
+                type: "solid",
+                opacity: 0,
+              },
             };
           });
 
@@ -521,141 +546,135 @@ document.addEventListener("DOMContentLoaded", function () {
           existingOverlay.remove();
         }
 
-        chartInstance = new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: displayLabels,
-            datasets: datasets,
+        const chartOptions = {
+          series: series,
+          chart: {
+            type: "line",
+            height: 400,
+            toolbar: {
+              show: false,
+            },
+            animations: {
+              enabled: true,
+              easing: "easeinout",
+              speed: 800,
+            },
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                display: false,
+          dataLabels: {
+            enabled: false,
+          },
+          stroke: {
+            curve: "straight",
+            width: 2,
+          },
+          xaxis: {
+            categories: displayLabels,
+            labels: {
+              style: {
+                colors: "#000",
+                fontSize: "12px",
               },
-              tooltip: {
-                enabled: true,
-                mode: "index",
-                intersect: false,
-                backgroundColor: "rgba(0, 0, 0, 0.8)",
-                titleColor: "#FFFFFF",
-                bodyColor: "#FFFFFF",
-                cornerRadius: 6,
-                displayColors: true,
-                callbacks: {
-                  title: function (tooltipItems) {
-                    // Display the year from the x-axis label
-                    return tooltipItems[0].label;
-                  },
-                  label: function (context) {
-                    // Display only the index name and its value for each dataset
-                    return `${context.dataset.label}: ${Math.round(
-                      context.parsed.y
-                    )}`;
-                  },
-                  // },
-                  // // Add tooltip event listeners
-                  // external: function (context) {
-                  //   // Update overlay when tooltip is shown
-                  //   if (context.tooltip.opacity > 0) {
-                  //     updateOverlayValues(context.tooltip.dataPoints);
-                  //   } else {
-                  //     // Reset to default values when tooltip is hidden
-                  //     updateOverlayValues();
-                  //   }
-                  footer: function () {
-                    // Display IRR and Exit Value once in the footer
-                    const irrResult =
-                      document.getElementById("irr-result").value || "0";
-                    const exitValue =
-                      document.getElementById("exitValue").value || "0";
-                    // // updateOverlayValues(parseFloat(irrResult).toFixed(2));
+              maxHeight: 30,
+            },
+            axisBorder: {
+              show: true,
+              color: "#000",
+            },
+            axisTicks: {
+              show: false,
+            },
+            grid: {
+              show: false,
+            },
+          },
+          yaxis: {
+            title: {
+              text: "% Growth (Base Adjusted)",
+              style: {
+                color: "#000",
+                fontSize: "14px",
+              },
+            },
+            min: 0,
+            labels: {
+              style: {
+                colors: "#000",
+                fontSize: "12px",
+              },
+              formatter: function (value) {
+                return Math.round(value);
+              },
+            },
+            axisBorder: {
+              show: true,
+              color: "#000",
+              width: 1,
+            },
+            grid: {
+              show: true,
+              strokeDashArray: [6, 3],
+              color: "#e8e8e8",
+              strokeWidth: 1,
+            },
+          },
+          tooltip: {
+            enabled: true,
+            shared: true,
+            intersect: false,
+            style: {
+              fontSize: "12px",
+            },
+            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+              const indexName = w.globals.seriesNames[seriesIndex];
+              const value = series[seriesIndex][dataPointIndex];
+              return `
+                <div style="background: rgba(0, 0, 0, 0.8); color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px;">
+                  <div style="margin-bottom: 4px;">
+                    <span style="color: ${
+                      w.globals.colors[seriesIndex]
+                    }; font-weight: bold;">●</span>
+                    ${indexName}: ${Math.round(value)}
+                  </div>
+                </div>
+              `;
+            },
+          },
+          legend: {
+            show: false,
+          },
+          grid: {
+            show: true,
+            strokeDashArray: [6, 3],
+            position: "back",
+            xaxis: {
+              lines: {
+                show: false,
+              },
+            },
+            yaxis: {
+              lines: {
+                show: true,
+              },
+            },
+          },
+          markers: {
+            size: 3,
+            strokeWidth: 0,
+            hover: {
+              size: 6,
+              sizeOffset: 3,
+            },
+          },
+        };
 
-                    // return [
-                    //   "-----------------------",
-                    //   `IRR: ${parseFloat(irrResult).toFixed(2)}%`,
-                    //   `Exit Value: ${parseFloat(exitValue).toFixed(2)}`,
-                    // ];
-                  },
-                },
-              },
-            },
-            scales: {
-              x: {
-                title: {
-                  display: false,
-                },
-                grid: {
-                  display: false,
-                },
-                ticks: {
-                  maxTicksLimit: 10,
-                  padding: 10,
-                  color: "#000",
-                },
-                border: {
-                  display: true,
-                  color: "#000",
-                  width: 1,
-                },
-              },
-              y: {
-                title: {
-                  display: true,
-                  text: "% Growth (Base Adjusted)",
-                  font: { size: 14 },
-                  color: "#000",
-                },
-                min: 0,
-                grid: {
-                  display: true,
-                  drawOnChartArea: true,
-                  drawTicks: false,
-                  color: "#e8e8e8",
-                  borderDash: [6, 3], // Dashed lines: 6px dash, 3px gap
-                  borderDashOffset: 1,
-                  lineWidth: 1,
-                  drawBorder: false,
-                },
-                ticks: {
-                  callback: function (value) {
-                    return Math.round(value);
-                  },
-                  padding: 10,
-                  color: "#000",
-                },
-                border: {
-                  display: true,
-                  color: "#000",
-                  width: 1,
-                },
-              },
-            },
-            interaction: {
-              mode: "nearest",
-              axis: "x",
-              intersect: false,
-            },
-            layout: {
-              padding: {
-                top: 20,
-                bottom: 20,
-                left: 20,
-                right: 20,
-              },
-            },
-            elements: {
-              point: {
-                hoverBorderWidth: 2,
-              },
-              line: {
-                borderJoinStyle: "round",
-              },
-            },
-          },
+        chartInstance = new ApexCharts(chartDiv, chartOptions);
+        chartInstance.render().then(() => {
+          chartInstance.w.globals.seriesNames.forEach((seriesName, index) => {
+            if (!initialIndices.includes(seriesName)) {
+              chartInstance.hideSeries(seriesName);
+            }
+          });
         });
-
         // // Create overlay elements for IRR and Exit Value in top right corner
         const overlayContainer = document.createElement("div");
         overlayContainer.className = "irr-overlay";
@@ -733,7 +752,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // // Update overlay values initially with default values
         updateOverlayValues();
 
-        datasets.forEach((dataset, idx) => {
+        series.forEach((seriesData, idx) => {
           const legendItem = document.createElement("div");
           legendItem.style.display = "inline-block";
           legendItem.style.margin = "0 10px";
@@ -741,13 +760,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
           const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
-          checkbox.checked = !dataset.hidden;
+          checkbox.checked = initialIndices.includes(seriesData.name);
           checkbox.style.marginRight = "5px";
           checkbox.style.verticalAlign = "middle";
-          checkbox.style.accentColor = dataset.borderColor;
+          checkbox.style.accentColor = seriesData.color;
 
           const label = document.createElement("span");
-          label.textContent = dataset.label;
+          label.textContent = seriesData.name;
           label.style.color = "#000";
           label.style.fontSize = "12px";
           label.style.verticalAlign = "middle";
@@ -756,29 +775,31 @@ document.addEventListener("DOMContentLoaded", function () {
           colorIndicator.style.display = "inline-block";
           colorIndicator.style.width = "12px";
           colorIndicator.style.height = "12px";
-          colorIndicator.style.backgroundColor = dataset.borderColor;
+          colorIndicator.style.backgroundColor = seriesData.color;
           colorIndicator.style.borderRadius = "50%";
           colorIndicator.style.marginRight = "5px";
           colorIndicator.style.verticalAlign = "middle";
 
-          const toggleDataset = (useCheckboxState) => {
-            const meta = chartInstance.getDatasetMeta(idx);
-            meta.hidden = !useCheckboxState;
-            chartInstance.update();
+          const toggleSeries = (useCheckboxState) => {
+            if (useCheckboxState) {
+              chartInstance.showSeries(seriesData.name);
+            } else {
+              chartInstance.hideSeries(seriesData.name);
+            }
             console.log(
-              `Toggled visibility for ${dataset.label}: ${!meta.hidden}`
+              `Toggled visibility for ${seriesData.name}: ${useCheckboxState}`
             );
           };
 
           checkbox.addEventListener("change", (event) => {
             event.stopPropagation(); // Prevent legendItem click from firing
-            toggleDataset(checkbox.checked);
+            toggleSeries(checkbox.checked);
           });
 
           legendItem.addEventListener("click", (event) => {
             if (event.target !== checkbox) {
               checkbox.checked = !checkbox.checked; // Toggle checkbox state
-              toggleDataset(checkbox.checked);
+              toggleSeries(checkbox.checked);
             }
           });
 
@@ -792,6 +813,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         comparisonGraph.classList.remove("hide");
         document.querySelector(".irr-graph-container").classList.remove("hide");
+        comparisonGraph.scrollIntoView({ behavior: "smooth", block: "center" });
       })
       .catch((error) => {
         console.error("API call failed:", error);
