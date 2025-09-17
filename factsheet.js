@@ -1402,7 +1402,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       series: seriesData.shareAIS,
       colors: ["#1E6AAE", "#2492e0", "#5ab3f7"],
       plotOptions: {
-        bar: { horizontal: false, columnWidth: "55%", borderRadius: 5 },
+        bar: { horizontal: false, columnWidth: "55%", borderRadius: 2 },
       },
       annotations: {
         points: (() => {
