@@ -1413,7 +1413,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: { formatter: (val) => `${Math.round(val)}%` },
       },
       series: seriesData.shareAIS,
-      colors: ["#2D82BF", "#2DA0F9", "#8B8B8B"],
+      colors: ["#004678", "#0B82E2", "#606060"],
       plotOptions: {
         bar: { horizontal: false, columnWidth: "55%", borderRadius: 2 },
       },
@@ -1431,7 +1431,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               y: shareAISSheet["Services"]?.[year] || null,
               marker: {
                 size: 0,
-                fillColor: "#8B8B8B",
+                fillColor: "#606060",
                 strokeColor: "#fff",
                 radius: 2,
               },
@@ -1441,7 +1441,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 offsetX: 12,
                 offsetY: 2,
                 style: {
-                  color: "#8B8B8B",
+                  color: "#606060",
                   background: "#fff",
                   padding: "4px",
                   borderRadius: "4px",
