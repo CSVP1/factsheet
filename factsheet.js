@@ -1323,6 +1323,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       },
       series: seriesData.merchandiseTrade,
       colors: ["#1E6AAE", "#2492e0", "#5ab9f7"],
+      markers: {
+        size: 4,
+        strokeWidth: 2,
+        strokeColors: "#ffffff",
+        hover: { size: 6, sizeOffset: 3 },
+      },
       annotations: {
         points: (() => {
           const year =
