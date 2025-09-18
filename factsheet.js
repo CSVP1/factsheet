@@ -1096,7 +1096,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 text: `${(unemploymentRateSheet["India"]?.[year] || 0).toFixed(
                   2
                 )}%`,
-                position: "top",
+                position: "right",
+                offsetX: 15,
                 offsetY: 2,
                 style: {
                   color: "#1e40af",
@@ -1234,7 +1235,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 text: `${(governmentBondSheet["India"]?.[year] || 0).toFixed(
                   2
                 )}%`,
-                position: "top",
+                position: "right",
+                offsetX: 15,
                 offsetY: 2,
                 style: {
                   color: "#1e40af",
@@ -1340,14 +1342,15 @@ document.addEventListener("DOMContentLoaded", async function () {
               marker: {
                 size: 6,
                 fillColor: "#1e40af",
-                strokeColor: "#1e40af",
+                strokeColor: "#fff",
                 radius: 2,
               },
               label: {
                 text: `${(merchandiseTradeSheet[year]?.Exports || 0).toFixed(
                   2
                 )}`,
-                position: "top",
+                position: "right",
+                offsetX: 15,
                 offsetY: 2,
                 style: {
                   color: "#1e40af",
@@ -1374,6 +1377,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     "agricultureChart",
     {
       ...commonOptions,
+      stroke: {
+        curve: "straight",
+        width: 0,
+      },
       chart: {
         ...commonOptions.chart,
         id: "agricultureChart",
@@ -1400,7 +1407,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: { formatter: (val) => `${Math.round(val)}%` },
       },
       series: seriesData.shareAIS,
-      colors: ["#1E6AAE", "#2492e0", "#5ab3f7"],
+      colors: ["#2D82BF", "#2DA0F9", "#8B8B8B"],
       plotOptions: {
         bar: { horizontal: false, columnWidth: "55%", borderRadius: 2 },
       },
@@ -1418,17 +1425,17 @@ document.addEventListener("DOMContentLoaded", async function () {
               y: shareAISSheet["Services"]?.[year] || null,
               marker: {
                 size: 0,
-                fillColor: "#5ab9f7",
+                fillColor: "#8B8B8B",
                 strokeColor: "#fff",
                 radius: 2,
               },
               label: {
                 text: `${(shareAISSheet["Services"]?.[year] || 0).toFixed(2)}%`,
                 position: "top",
-                offsetX: 15,
+                offsetX: 12,
                 offsetY: 2,
                 style: {
-                  color: "#5ab9f7",
+                  color: "#8B8B8B",
                   background: "#fff",
                   padding: "4px",
                   borderRadius: "4px",

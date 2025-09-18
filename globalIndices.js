@@ -175,11 +175,17 @@ document.addEventListener("DOMContentLoaded", function () {
           },
           axisBorder: {
             show: true,
-            color: "#000",
+            color: "#ABCAE9",
           },
-          axisTicks: {
-            show: false,
+          crosshairs: {
+            show: true,
+            stroke: {
+              color: "#ABCAE9",
+              width: 1,
+              dashArray: 0,
+            },
           },
+
           grid: {
             show: false,
           },
@@ -204,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
           },
           axisBorder: {
             show: true,
-            color: "#000",
+            color: "#ABCAE9",
             width: 1,
           },
           grid: {
@@ -578,10 +584,15 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             axisBorder: {
               show: true,
-              color: "#000",
+              color: "#ABCAE9",
             },
-            axisTicks: {
-              show: false,
+            crosshairs: {
+              show: true,
+              stroke: {
+                color: "#ABCAE9",
+                width: 1,
+                dashArray: 0,
+              },
             },
             grid: {
               show: false,
@@ -607,7 +618,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             axisBorder: {
               show: true,
-              color: "#000",
+              color: "#ABCAE9",
               width: 1,
             },
             grid: {
@@ -736,15 +747,19 @@ document.addEventListener("DOMContentLoaded", function () {
             // Show default values (current year/final values)
             const irrValue = document.getElementById("irr-result").value || "0";
             const exitValue = document.getElementById("exitValue").value || "0";
+            const Formatter = new Intl.NumberFormat("en-IN", {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            });
 
+            console;
             if (irrDisplayElement) {
               irrDisplayElement.textContent = `${parseFloat(irrValue).toFixed(
                 2
               )}%`;
             }
             if (exitValueDisplayElement) {
-              exitValueDisplayElement.textContent =
-                parseFloat(exitValue).toFixed(2);
+              exitValueDisplayElement.textContent = Formatter.format(exitValue);
             }
           }
         };
