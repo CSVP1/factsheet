@@ -1383,15 +1383,24 @@ document.addEventListener("DOMContentLoaded", async function () {
     "agricultureChart",
     {
       ...commonOptions,
-      stroke: {
-        curve: "straight",
-        width: 0,
-      },
       chart: {
         ...commonOptions.chart,
         id: "agricultureChart",
         type: "bar",
         height: 220,
+        animations: {
+          enabled: true,
+          easing: "easeinout",
+          speed: 1000,
+          animateGradually: {
+            enabled: true,
+            delay: 150,
+          },
+          dynamicAnimation: {
+            enabled: true,
+            speed: 350,
+          },
+        },
       },
       xaxis: {
         ...commonOptions.xaxis,
@@ -1416,6 +1425,17 @@ document.addEventListener("DOMContentLoaded", async function () {
       colors: ["#004678", "#0B82E2", "#606060"],
       plotOptions: {
         bar: { horizontal: false, columnWidth: "55%", borderRadius: 2 },
+      },
+      fill: {
+        type: "gradient",
+        gradient: {
+          type: "vertical",
+          stops: [0, 20],
+        },
+      },
+      stroke: {
+        curve: "straight",
+        width: 1,
       },
       annotations: {
         points: (() => {
@@ -1487,7 +1507,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         title: { text: "Year", offsetY: 1 },
         labels: {
           ...commonOptions.xaxis.labels,
-          rotate: -60,
+          rotate: -50,
+          rotateAlways: true,
+          hideOverlappingLabels: true,
+          trim: false,
+          style: {
+            ...commonOptions.xaxis.labels.style,
+            fontSize: "12px",
+          },
         },
       },
       yaxis: {
@@ -1577,7 +1604,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       : "Data not available"
   );
 
-  // Update for annualReturnsChart-nifty: remove legend and set x-axis label to "Nifty graph"
   renderChart(
     "annualReturnsChart-nifty",
     {
@@ -1608,7 +1634,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         title: { text: "Year", offsetY: 1 },
         labels: {
           ...commonOptions.xaxis.labels,
-          rotate: -60,
+          rotate: -50,
+          rotateAlways: true,
+          hideOverlappingLabels: true,
+          trim: false,
+          style: {
+            ...commonOptions.xaxis.labels.style,
+            fontSize: "12px",
+          },
         },
       },
       yaxis: {
@@ -2266,6 +2299,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     setupPopup(
       "populationChart",
       {
+        stroke: {
+          curve: "straight",
+          width: 1,
+        },
         chart: {
           type: "bar",
           height: 400,
@@ -2275,6 +2312,13 @@ document.addEventListener("DOMContentLoaded", async function () {
             enabled: false,
           },
         },
+        // fill: {
+        //   type: "gradient",
+        //   gradient: {
+        //     type: "vertical",
+        //     stops: [0, 20],
+        //   },
+        // },
         xaxis: {
           title: { text: "Country" },
           labels: { style: { colors: "#9ca3af" } },

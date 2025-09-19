@@ -481,9 +481,10 @@ document.addEventListener("DOMContentLoaded", function () {
           });
 
         const defaultIndices = ["NASDAQ 100", "NIFTY IT", "BSE IT", "NIFTY"];
-        const initialIndices = [...new Set([index, ...defaultIndices])];
+        let visibleIndices = [...new Set([index, ...defaultIndices])]; // Track currently visible indices
 
-        const series = data.data
+        // Get all available series
+        const allSeries = data.data
           .filter((item) => item.table === "Base Adjusted Values")
           .map((indexData, i) => {
             const isSelectedIndex = indexData.indexName === index;
@@ -542,18 +543,22 @@ document.addEventListener("DOMContentLoaded", function () {
             };
           });
 
+        // Filter to only include initial indices for rendering
+        const seriesToRender = allSeries.filter((seriesData) =>
+          visibleIndices.includes(seriesData.name)
+        );
+
         if (chartInstance) {
           chartInstance.destroy();
         }
 
-        // // Remove existing overlay if it exists
         const existingOverlay = comparisonGraph.querySelector(".irr-overlay");
         if (existingOverlay) {
           existingOverlay.remove();
         }
 
         const chartOptions = {
-          series: series,
+          series: seriesToRender,
           chart: {
             type: "line",
             height: 400,
@@ -679,14 +684,9 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         chartInstance = new ApexCharts(chartDiv, chartOptions);
-        chartInstance.render().then(() => {
-          chartInstance.w.globals.seriesNames.forEach((seriesName, index) => {
-            if (!initialIndices.includes(seriesName)) {
-              chartInstance.hideSeries(seriesName);
-            }
-          });
-        });
-        // // Create overlay elements for IRR and Exit Value in top right corner
+        chartInstance.render();
+
+        // Create overlay elements
         const overlayContainer = document.createElement("div");
         overlayContainer.className = "irr-overlay";
         overlayContainer.style.position = "absolute";
@@ -752,7 +752,6 @@ document.addEventListener("DOMContentLoaded", function () {
               maximumFractionDigits: 0,
             });
 
-            console;
             if (irrDisplayElement) {
               irrDisplayElement.textContent = `${parseFloat(irrValue).toFixed(
                 2
@@ -764,10 +763,11 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         };
 
-        // // Update overlay values initially with default values
+        // Update overlay values initially with default values
         updateOverlayValues();
 
-        series.forEach((seriesData, idx) => {
+        // Create legend for all series with proper toggle functionality
+        allSeries.forEach((seriesData, idx) => {
           const legendItem = document.createElement("div");
           legendItem.style.display = "inline-block";
           legendItem.style.margin = "0 10px";
@@ -775,7 +775,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
-          checkbox.checked = initialIndices.includes(seriesData.name);
+          checkbox.checked = visibleIndices.includes(seriesData.name);
           checkbox.style.marginRight = "5px";
           checkbox.style.verticalAlign = "middle";
           checkbox.style.accentColor = seriesData.color;
@@ -795,33 +795,50 @@ document.addEventListener("DOMContentLoaded", function () {
           colorIndicator.style.marginRight = "5px";
           colorIndicator.style.verticalAlign = "middle";
 
-          const toggleSeries = (useCheckboxState) => {
-            if (useCheckboxState) {
-              chartInstance.showSeries(seriesData.name);
+          const toggleSeries = (shouldShow) => {
+            if (shouldShow) {
+              // Add to visible indices if not already there
+              if (!visibleIndices.includes(seriesData.name)) {
+                visibleIndices.push(seriesData.name);
+              }
+
+              // Check if series exists in chart, if not add it
+              const existingSeries = chartInstance.w.config.series.find(
+                (s) => s.name === seriesData.name
+              );
+              if (!existingSeries) {
+                chartInstance.appendSeries(seriesData);
+              } else {
+                chartInstance.showSeries(seriesData.name);
+              }
+              console.log("showSeries=====>", seriesData.name);
             } else {
+              // Remove from visible indices
+              visibleIndices = visibleIndices.filter(
+                (item) => item !== seriesData.name
+              );
               chartInstance.hideSeries(seriesData.name);
+              console.log("hideSeries=====>", seriesData.name);
             }
-            console.log(
-              `Toggled visibility for ${seriesData.name}: ${useCheckboxState}`
-            );
+            console.log("Current visible indices:", visibleIndices);
           };
 
           checkbox.addEventListener("change", (event) => {
-            event.stopPropagation(); // Prevent legendItem click from firing
+            event.stopPropagation();
             toggleSeries(checkbox.checked);
           });
 
           legendItem.addEventListener("click", (event) => {
             if (event.target !== checkbox) {
-              checkbox.checked = !checkbox.checked; // Toggle checkbox state
+              checkbox.checked = !checkbox.checked;
               toggleSeries(checkbox.checked);
             }
           });
 
           legendItem.appendChild(checkbox);
           legendItem.appendChild(colorIndicator);
-          customLegendContainer.appendChild(legendItem);
           legendItem.appendChild(label);
+          customLegendContainer.appendChild(legendItem);
         });
 
         console.log("Custom legend generated");
