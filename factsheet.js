@@ -1430,7 +1430,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         type: "gradient",
         gradient: {
           type: "vertical",
-          stops: [0, 20],
+          stops: [0, 100],
         },
       },
       stroke: {
