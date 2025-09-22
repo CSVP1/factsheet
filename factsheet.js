@@ -1357,6 +1357,43 @@ document.addEventListener("DOMContentLoaded", async function () {
         strokeColors: "#ffffff",
         hover: { size: 6, sizeOffset: 3 },
       },
+      tooltip: {
+        enabled: true,
+        shared: true,
+        intersect: false,
+        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          const year = w.globals.categoryLabels[dataPointIndex];
+          const isEstimated = parseInt(year) >= 2025 ? " (E)" : "";
+
+          // Create header with year
+          let tooltipContent = `
+            <div style="background: rgba(0, 0, 0, 0.9); color: white; padding: 12px; border-radius: 8px; font-size: 12px; min-width: 200px;">
+              <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 6px;">
+                ${year}${isEstimated}
+              </div>
+          `;
+
+          // Add all series data for this year
+          series.forEach((seriesData, index) => {
+            const value = seriesData[dataPointIndex];
+            const seriesName = w.globals.seriesNames[index];
+            const color = w.globals.colors[index];
+
+            tooltipContent += `
+              <div style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: ${color}; font-weight: bold;">●</span>
+                <span style="flex: 1; margin-left: 8px;">${seriesName}:</span>
+                <span style="font-weight: bold;">${
+                  value !== null ? value.toFixed(2) + "B" : "N/A"
+                }</span>
+              </div>
+            `;
+          });
+
+          tooltipContent += `</div>`;
+          return tooltipContent;
+        },
+      },
       annotations: {
         points: (() => {
           const year =
@@ -1380,9 +1417,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 radius: 2,
               },
               label: {
-                text: `${(merchandiseTradeSheet[year]?.Exports || 0).toFixed(
-                  2
-                )}`,
                 position: "right",
                 offsetX: 15,
                 offsetY: 2,
@@ -2813,13 +2847,39 @@ document.addEventListener("DOMContentLoaded", async function () {
         dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
         tooltip: {
           enabled: true,
+          shared: true,
+          intersect: false,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const value = series[seriesIndex][dataPointIndex];
-            return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-              ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + "B" : "N/A"
-            }
-            </div>`;
+            const year = w.globals.categoryLabels[dataPointIndex];
+            const isEstimated = parseInt(year) >= 2025 ? " (E)" : "";
+
+            // Create header with year
+            let tooltipContent = `
+              <div style="background: rgba(0, 0, 0, 0.9); color: white; padding: 12px; border-radius: 8px; font-size: 12px; min-width: 200px;">
+                <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 6px;">
+                  ${year}${isEstimated}
+                </div>
+            `;
+
+            // Add all series data for this year
+            series.forEach((seriesData, index) => {
+              const value = seriesData[dataPointIndex];
+              const seriesName = w.globals.seriesNames[index];
+              const color = w.globals.colors[index];
+
+              tooltipContent += `
+                <div style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="color: ${color}; font-weight: bold;">●</span>
+                  <span style="flex: 1; margin-left: 8px;">${seriesName}:</span>
+                  <span style="font-weight: bold;">${
+                    value !== null ? value.toFixed(2) + "B" : "N/A"
+                  }</span>
+                </div>
+              `;
+            });
+
+            tooltipContent += `</div>`;
+            return tooltipContent;
           },
         },
         dataLabels: { enabled: false },
