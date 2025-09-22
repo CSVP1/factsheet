@@ -168,8 +168,10 @@ document.addEventListener("DOMContentLoaded", function () {
           categories: dates,
           labels: {
             style: {
-              colors: "#000",
               fontSize: "12px",
+              fontFamily: "Poppins",
+              fontWeight: 400,
+              colors: ["#2E2E2E"],
             },
             maxHeight: 30,
           },
@@ -196,14 +198,17 @@ document.addEventListener("DOMContentLoaded", function () {
             style: {
               color: "#000",
               fontSize: "12px",
-              fontWeight: "bold",
+              fontWeight: "600",
+              fontFamily: "Poppins",
             },
           },
           min: 0,
           labels: {
             style: {
-              colors: "#000",
               fontSize: "12px",
+              fontFamily: "Poppins",
+              fontWeight: 400,
+              colors: ["#2E2E2E"],
             },
             formatter: function (value) {
               return Math.round(value);
@@ -216,9 +221,15 @@ document.addEventListener("DOMContentLoaded", function () {
           },
           grid: {
             show: true,
-            strokeDashArray: [8, 4],
+            strokeDashArray: [6, 3],
             color: "#e8e8e8",
             strokeWidth: 1,
+            // show: true,
+            // borderColor: "rgba(120, 144, 156, 0.2)",
+            // strokeDashArray: 3,
+            // // strokeDashArray: [8, 4],
+            // color: "#e8e8e8",
+            // strokeWidth: 1,
           },
         },
         tooltip: {
@@ -568,8 +579,8 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             animations: {
               enabled: true,
-              easing: "easeinout",
-              speed: 800,
+              // easing: "easeinout",
+              // speed: 800,
             },
           },
           dataLabels: {
@@ -583,8 +594,10 @@ document.addEventListener("DOMContentLoaded", function () {
             categories: displayLabels,
             labels: {
               style: {
-                colors: "#000",
                 fontSize: "12px",
+                fontFamily: "Poppins",
+                fontWeight: 400,
+                colors: ["#2E2E2E"],
               },
               maxHeight: 30,
             },
@@ -609,14 +622,18 @@ document.addEventListener("DOMContentLoaded", function () {
               text: "% Growth (Base Adjusted)",
               style: {
                 color: "#000",
-                fontSize: "14px",
+                fontSize: "12px",
+                fontWeight: "600",
+                fontFamily: "Poppins",
               },
             },
             min: 0,
             labels: {
               style: {
-                colors: "#000",
                 fontSize: "12px",
+                fontFamily: "Poppins",
+                fontWeight: 400,
+                colors: ["#2E2E2E"],
               },
               formatter: function (value) {
                 return Math.round(value);
