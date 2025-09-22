@@ -195,7 +195,8 @@ document.addEventListener("DOMContentLoaded", function () {
             text: "% Growth (Base Adjusted)",
             style: {
               color: "#000",
-              fontSize: "14px",
+              fontSize: "12px",
+              fontWeight: "bold",
             },
           },
           min: 0,
