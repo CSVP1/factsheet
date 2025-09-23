@@ -233,6 +233,18 @@ document.addEventListener("DOMContentLoaded", function () {
           },
         },
         tooltip: {
+          y: {
+            formatter: function (
+              value,
+              { series, seriesIndex, dataPointIndex, w }
+            ) {
+              return value !== null
+                ? FormatterWithZero.format(value) + "B"
+                : "N/A";
+            },
+          },
+        },
+        tooltip: {
           enabled: true,
           shared: true,
           intersect: false,
@@ -240,18 +252,34 @@ document.addEventListener("DOMContentLoaded", function () {
             fontSize: "12px",
           },
           custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-            const indexName = w.globals.seriesNames[seriesIndex];
-            const value = series[seriesIndex][dataPointIndex];
-            return `
-              <div style="background: rgba(0, 0, 0, 0.8); color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px;">
-                <div style="margin-bottom: 4px;">
-                  <span style="color: ${
-                    w.globals.colors[seriesIndex]
-                  }; font-weight: bold;">●</span>
-                  ${indexName}: ${value !== null ? value.toFixed(2) : "N/A"}
+            const year = w.globals.labels[dataPointIndex];
+            let tooltipContent = `
+              <div style="background:rgb(254, 254, 254); color: white; padding: 12px 16px; border-radius: 8px; font-size: 12px; min-width: 200px;">
+                <div style="margin-bottom: 8px; font-weight: bold; border-bottom: 1px solid rgba(100, 97, 97, 0.3); padding-bottom: 4px; color: #000;">
+                  Year: ${dates[year - 1]}
                 </div>
-              </div>
             `;
+
+            // Show all visible series (not just the hovered one)
+            w.globals.seriesNames.forEach((seriesName, index) => {
+              const seriesData = series[index];
+              const value = seriesData[dataPointIndex];
+              const color = w.globals.colors[index];
+
+              // Only show if series is visible (not hidden)
+              if (value !== null && value !== undefined) {
+                tooltipContent += `
+                  <div style="margin-bottom: 4px; display: flex; align-items: center; color: #000; ">
+                    <span style="color: ${color}; font-weight: bold; margin-right: 8px;">●</span>
+                    <span style="flex: 1;">${seriesName}:</span>
+                    <span style="font-weight: bold;">${Math.round(value)}</span>
+                  </div>
+                `;
+              }
+            });
+
+            tooltipContent += `</div>`;
+            return tooltipContent;
           },
         },
         legend: {

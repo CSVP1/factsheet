@@ -1358,18 +1358,29 @@ document.addEventListener("DOMContentLoaded", async function () {
         hover: { size: 6, sizeOffset: 3 },
       },
       tooltip: {
+        y: {
+          formatter: function (
+            value,
+            { series, seriesIndex, dataPointIndex, w }
+          ) {
+            return value !== null
+              ? FormatterWithZero.format(value) + "B"
+              : "N/A";
+          },
+        },
         enabled: true,
         shared: true,
         intersect: false,
+
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
           const year = w.globals.categoryLabels[dataPointIndex];
           const isEstimated = parseInt(year) >= 2025 ? " (E)" : "";
 
           // Create header with year
           let tooltipContent = `
-            <div style="background: rgba(0, 0, 0, 0.9); color: white; padding: 12px; border-radius: 8px; font-size: 12px; min-width: 200px;">
-              <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 6px;">
-                ${year}${isEstimated}
+            <div style="background:rgb(254, 254, 254); color: white; padding: 12px 16px; border-radius: 8px; font-size: 12px; min-width: 200px;">
+                <div style="margin-bottom: 8px; font-weight: bold; border-bottom: 1px solid rgba(100, 97, 97, 0.3); padding-bottom: 4px; color: #000;">
+                 ${year}${isEstimated}
               </div>
           `;
 
@@ -1380,12 +1391,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             const color = w.globals.colors[index];
 
             tooltipContent += `
-              <div style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
-                <span style="color: ${color}; font-weight: bold;">●</span>
-                <span style="flex: 1; margin-left: 8px;">${seriesName}:</span>
-                <span style="font-weight: bold;">${
-                  value !== null ? value.toFixed(2) + "B" : "N/A"
-                }</span>
+               <div style="margin-bottom: 4px; display: flex; align-items: center; color: #000; ">
+                    <span style="color: ${color}; font-weight: bold; margin-right: 8px;">●</span>
+                    <span style="flex: 1;">${seriesName}:</span>
+                 <span style="font-weight: bold;">${
+                   value !== null ? Formatter.format(value) + "B" : "N/A"
+                 }</span>
               </div>
             `;
           });
@@ -1411,9 +1422,9 @@ document.addEventListener("DOMContentLoaded", async function () {
               x: year,
               y: merchandiseTradeSheet[year]?.Exports || null,
               marker: {
-                size: 6,
+                size: 1,
                 fillColor: "#1E6AAE",
-                strokeColor: "#fff",
+                strokeColor: "#1E6AAE",
                 radius: 2,
               },
               label: {
