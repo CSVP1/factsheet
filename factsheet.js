@@ -1544,7 +1544,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 radius: 2,
               },
               label: {
-                text: `${(shareAISSheet["Services"]?.[year] || 0).toFixed(2)}%`,
+                text: ``,
                 position: "top",
                 offsetX: 12,
                 offsetY: 2,
