@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const year = w.globals.labels[dataPointIndex];
             let tooltipContent = `
               <div style="background:rgb(254, 254, 254); color: white; padding: 12px 16px; border-radius: 8px; font-size: 12px; min-width: 200px;">
-                <div style="margin-bottom: 8px; font-weight: bold; border-bottom: 1px solid rgba(100, 97, 97, 0.3); padding-bottom: 4px; color: #000;">
+                <div style="margin-bottom: 8px; font-weight: normal; border-bottom: 1px solid rgba(100, 97, 97, 0.3); padding-bottom: 4px; color: #333;">
                   Year: ${dates[year - 1]}
                 </div>
             `;
@@ -269,10 +269,10 @@ document.addEventListener("DOMContentLoaded", function () {
               // Only show if series is visible (not hidden)
               if (value !== null && value !== undefined) {
                 tooltipContent += `
-                  <div style="margin-bottom: 4px; display: flex; align-items: center; color: #000; ">
+                  <div style="margin-bottom: 4px; display: flex; align-items: center; color: #333; ">
                     <span style="color: ${color}; font-weight: bold; margin-right: 8px;">●</span>
                     <span style="flex: 1;">${seriesName}:</span>
-                    <span style="font-weight: bold;">${Math.round(value)}</span>
+                    <span style="font-weight: 600;">${Math.round(value)}</span>
                   </div>
                 `;
               }

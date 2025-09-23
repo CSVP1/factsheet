@@ -1379,7 +1379,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           // Create header with year
           let tooltipContent = `
             <div style="background:rgb(254, 254, 254); color: white; padding: 12px 16px; border-radius: 8px; font-size: 12px; min-width: 200px;">
-                <div style="margin-bottom: 8px; font-weight: bold; border-bottom: 1px solid rgba(100, 97, 97, 0.3); padding-bottom: 4px; color: #000;">
+                <div style="margin-bottom: 8px; font-weight: bold; border-bottom: 1px solid rgba(100, 97, 97, 0.3); padding-bottom: 4px; color: #333;">
                  ${year}${isEstimated}
               </div>
           `;
@@ -1391,7 +1391,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             const color = w.globals.colors[index];
 
             tooltipContent += `
-               <div style="margin-bottom: 4px; display: flex; align-items: center; color: #000; ">
+               <div style="margin-bottom: 4px; display: flex; align-items: center; color: #333; ">
                     <span style="color: ${color}; font-weight: bold; margin-right: 8px;">●</span>
                     <span style="flex: 1;">${seriesName}:</span>
                  <span style="font-weight: bold;">${
