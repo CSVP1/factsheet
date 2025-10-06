@@ -153,8 +153,6 @@ document.addEventListener("DOMContentLoaded", function () {
           },
           animations: {
             enabled: true,
-            easing: "easeinout",
-            speed: 800,
           },
         },
         dataLabels: {
@@ -607,8 +605,6 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             animations: {
               enabled: true,
-              // easing: "easeinout",
-              // speed: 800,
             },
           },
           dataLabels: {
@@ -687,18 +683,36 @@ document.addEventListener("DOMContentLoaded", function () {
               fontSize: "12px",
             },
             custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-              const indexName = w.globals.seriesNames[seriesIndex];
-              const value = series[seriesIndex][dataPointIndex];
-              return `
-                <div style="background: rgba(0, 0, 0, 0.8); color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px;">
-                  <div style="margin-bottom: 4px;">
-                    <span style="color: ${
-                      w.globals.colors[seriesIndex]
-                    }; font-weight: bold;">●</span>
-                    ${indexName}: ${Math.round(value)}
+              const year = w.globals.labels[dataPointIndex];
+              let tooltipContent = `
+                <div style="background: #fff; color: #333; padding: 12px 16px; border-radius: 8px; font-size: 12px; min-width: 200px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                  <div style="margin-bottom: 8px; font-weight: bold; border-bottom: 1px solid rgba(0, 0, 0, 0.1); padding-bottom: 4px; color: #333;">
+                    Year: ${displayLabels[year - 1]}
                   </div>
-                </div>
               `;
+
+              // Show all visible series (not just the hovered one)
+              w.globals.seriesNames.forEach((seriesName, index) => {
+                const seriesData = series[index];
+                const value = seriesData[dataPointIndex];
+                const color = w.globals.colors[index];
+
+                // Only show if series is visible (not hidden) and has data
+                if (value !== null && value !== undefined) {
+                  tooltipContent += `
+                    <div style="margin-bottom: 4px; display: flex; align-items: center; color: #333;">
+                      <span style="color: ${color}; font-weight: bold; margin-right: 8px;">●</span>
+                      <span style="flex: 1;">${seriesName}:</span>
+                      <span style="font-weight: bold;">${Math.round(
+                        value
+                      )}%</span>
+                    </div>
+                  `;
+                }
+              });
+
+              tooltipContent += `</div>`;
+              return tooltipContent;
             },
           },
           legend: {
@@ -720,11 +734,11 @@ document.addEventListener("DOMContentLoaded", function () {
             },
           },
           markers: {
-            size: 3,
+            size: 5,
             strokeWidth: 0,
             hover: {
-              size: 6,
-              sizeOffset: 3,
+              size: 7,
+              sizeOffset: 2,
             },
           },
         };

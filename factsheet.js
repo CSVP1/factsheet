@@ -49,6 +49,61 @@ document.addEventListener("DOMContentLoaded", async function () {
     return year >= new Date().getFullYear() ? " (E)" : "";
   }
 
+  // Shared tooltip function that shows all series data at once
+  function createSharedTooltip(
+    { series, seriesIndex, dataPointIndex, w },
+    unit = "",
+    formatter = null
+  ) {
+    const year = w.globals.categoryLabels[dataPointIndex];
+    const isEstimated = parseInt(year) >= 2025 ? " (E)" : "";
+
+    // Create header with year
+    let tooltipContent = `
+      <div style="background: #fff; color: #333; padding: 12px 16px; border-radius: 8px; font-size: 12px; min-width: 200px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+          <div style="margin-bottom: 8px; font-weight: bold; border-bottom: 1px solid rgba(0, 0, 0, 0.1); padding-bottom: 4px; color: #333;">
+           ${year}${isEstimated}
+        </div>
+    `;
+
+    // Add all series data for this year
+    series.forEach((seriesData, index) => {
+      const value = seriesData[dataPointIndex];
+      const seriesName = w.globals.seriesNames[index];
+      const color = w.globals.colors[index];
+
+      let formattedValue;
+      if (formatter) {
+        formattedValue = formatter(value);
+      } else if (value !== null) {
+        if (unit === "%") {
+          formattedValue = value.toFixed(2) + "%";
+        } else if (unit === "B") {
+          formattedValue = Formatter.format(value) + "B";
+        } else if (unit === "Bn") {
+          formattedValue = DollarZeroCurrencyFormatter.format(value) + "Bn";
+        } else if (unit === "M") {
+          formattedValue = Formatter.format(value) + "M";
+        } else {
+          formattedValue = value.toFixed(2);
+        }
+      } else {
+        formattedValue = "N/A";
+      }
+
+      tooltipContent += `
+         <div style="margin-bottom: 4px; display: flex; align-items: center; color: #333;">
+              <span style="color: ${color}; font-weight: bold; margin-right: 8px;">●</span>
+              <span style="flex: 1;">${seriesName}:</span>
+           <span style="font-weight: bold;">${formattedValue}</span>
+        </div>
+      `;
+    });
+
+    tooltipContent += `</div>`;
+    return tooltipContent;
+  }
+
   // Extract individual sheets from the fetched data, providing empty objects as fallbacks for each metric
   const nominalGdpSheet = sheets["Nominal GDP"] || {};
   const realGdpGrowthSheet = sheets["Real GDP Growth (%)"] || {};
@@ -337,6 +392,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
     tooltip: {
       enabled: true,
+      shared: true,
+      intersect: false,
       custom: ({ series, seriesIndex, dataPointIndex, w }) => {
         const value = series[seriesIndex][dataPointIndex];
         const unit =
@@ -352,8 +409,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             : w.config.chart.id.includes("nominalGdpChart")
             ? "Bn"
             : "";
+
         return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-          ${w.globals.seriesNames[seriesIndex]}: ${
+            ${w.globals.seriesNames[seriesIndex]}: ${
           value !== null
             ? (w.config.chart.id.includes("nominalGdpChart") ||
               w.config.chart.id.includes("gdpPerCapita")
@@ -361,7 +419,23 @@ document.addEventListener("DOMContentLoaded", async function () {
                 : value.toFixed(2)) + unit
             : "N/A"
         }
-        </div>`;
+          </div>`;
+        const formatter = (value) => {
+          if (value === null) return "N/A";
+          if (
+            w.config.chart.id.includes("nominalGdpChart") ||
+            w.config.chart.id.includes("gdpPerCapita")
+          ) {
+            return DollarZeroCurrencyFormatter.format(value) + unit;
+          }
+          return value.toFixed(2) + unit;
+        };
+
+        return createSharedTooltip(
+          { series, seriesIndex, dataPointIndex, w },
+          unit,
+          formatter
+        );
       },
     },
     dataLabels: { enabled: false },
@@ -429,8 +503,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
     tooltip: {
       enabled: true,
+      shared: true,
+      intersect: false,
       custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-        const value = series[seriesIndex][dataPointIndex];
         const unit =
           w.config.chart.id.includes("realGDPGrowth") ||
           w.config.chart.id.includes("unemploymentRateChart") ||
@@ -444,15 +519,20 @@ document.addEventListener("DOMContentLoaded", async function () {
             : w.config.chart.id.includes("gdpPerCapita")
             ? ""
             : "";
-        return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-          ${w.globals.seriesNames[seriesIndex]}: ${
-          value !== null
-            ? (w.config.chart.id.includes("gdpPerCapita")
-                ? "$" + value.toFixed(2)
-                : value.toFixed(2)) + unit
-            : "N/A"
-        }
-        </div>`;
+
+        const formatter = (value) => {
+          if (value === null) return "N/A";
+          if (w.config.chart.id.includes("gdpPerCapita")) {
+            return "$" + value.toFixed(2) + unit;
+          }
+          return value.toFixed(2) + unit;
+        };
+
+        return createSharedTooltip(
+          { series, seriesIndex, dataPointIndex, w },
+          unit,
+          formatter
+        );
       },
     },
     dataLabels: { enabled: false },
@@ -2047,7 +2127,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         yaxis: {
           show: true,
-          title: { text: "India" },
+          title: { text: "" },
           axisBorder: {
             show: true,
             color: "#ABCAE9",
@@ -2096,20 +2176,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
         tooltip: {
           enabled: true,
+          shared: true,
+          intersect: false,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const value = series[seriesIndex][dataPointIndex];
-            const Estimated = getEstimatedLabel(w, dataPointIndex);
-            return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-              ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null
-                ? // ? "$" +
-                  //   value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-                  //   " Bn"
-                  value.toFixed(2) + "%" + Estimated
-                : // DollarZeroCurrencyFormatter.format(value) + " Bn"
-                  "N/A"
-            }
-            </div>`;
+            const formatter = (value) => {
+              if (value === null) return "N/A";
+              const Estimated = getEstimatedLabel(w, dataPointIndex);
+              return value.toFixed(2) + "%" + Estimated;
+            };
+
+            return createSharedTooltip(
+              { series, seriesIndex, dataPointIndex, w },
+              "%",
+              formatter
+            );
           },
         },
         dataLabels: { enabled: false },
@@ -2185,7 +2265,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         yaxis: {
           show: true,
-          title: { text: "India" },
+          title: { text: "" },
           axisBorder: {
             show: true,
             color: "#ABCAE9",
@@ -2235,14 +2315,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
         tooltip: {
           enabled: true,
+          shared: true,
+          intersect: false,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const value = series[seriesIndex][dataPointIndex];
-            const Estimated = getEstimatedLabel(w, dataPointIndex);
-            return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-              ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + "%" + Estimated : "N/A"
-            }
-            </div>`;
+            const formatter = (value) => {
+              if (value === null) return "N/A";
+              const Estimated = getEstimatedLabel(w, dataPointIndex);
+              return value.toFixed(2) + "%" + Estimated;
+            };
+
+            return createSharedTooltip(
+              { series, seriesIndex, dataPointIndex, w },
+              "%",
+              formatter
+            );
           },
         },
         dataLabels: { enabled: false },
@@ -2318,7 +2404,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         yaxis: {
           show: true,
-          title: { text: "India" },
+          title: { text: "" },
           axisBorder: {
             show: true,
             color: "#ABCAE9",
@@ -2367,14 +2453,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
         tooltip: {
           enabled: true,
+          shared: true,
+          intersect: false,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const value = series[seriesIndex][dataPointIndex];
-            const Estimated = getEstimatedLabel(w, dataPointIndex);
-            return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-              ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + "%" + Estimated : "N/A"
-            }
-            </div>`;
+            const formatter = (value) => {
+              if (value === null) return "N/A";
+              const Estimated = getEstimatedLabel(w, dataPointIndex);
+              return value.toFixed(2) + "%" + Estimated;
+            };
+
+            return createSharedTooltip(
+              { series, seriesIndex, dataPointIndex, w },
+              "%",
+              formatter
+            );
           },
         },
         dataLabels: { enabled: false },
@@ -2642,13 +2734,19 @@ document.addEventListener("DOMContentLoaded", async function () {
         dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
         tooltip: {
           enabled: true,
+          shared: true,
+          intersect: false,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const value = series[seriesIndex][dataPointIndex];
-            return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-              ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + "%" : "N/A"
-            }
-            </div>`;
+            const formatter = (value) => {
+              if (value === null) return "N/A";
+              return value.toFixed(2) + "%";
+            };
+
+            return createSharedTooltip(
+              { series, seriesIndex, dataPointIndex, w },
+              "%",
+              formatter
+            );
           },
         },
         dataLabels: { enabled: false },
@@ -2757,14 +2855,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
         tooltip: {
           enabled: true,
+          shared: true,
+          intersect: false,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const value = series[seriesIndex][dataPointIndex];
-            const Estimated = getEstimatedLabel(w, dataPointIndex);
-            return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-            ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + "%" + Estimated : "N/A"
-            }
-          </div>`;
+            const formatter = (value) => {
+              if (value === null) return "N/A";
+              const Estimated = getEstimatedLabel(w, dataPointIndex);
+              return value.toFixed(2) + "%" + Estimated;
+            };
+
+            return createSharedTooltip(
+              { series, seriesIndex, dataPointIndex, w },
+              "%",
+              formatter
+            );
           },
         },
         dataLabels: { enabled: false },
@@ -2972,13 +3076,19 @@ document.addEventListener("DOMContentLoaded", async function () {
         dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
         tooltip: {
           enabled: true,
+          shared: true,
+          intersect: false,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const value = series[seriesIndex][dataPointIndex];
-            return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-              ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + "%" : "N/A"
-            }
-            </div>`;
+            const formatter = (value) => {
+              if (value === null) return "N/A";
+              return value.toFixed(2) + "%";
+            };
+
+            return createSharedTooltip(
+              { series, seriesIndex, dataPointIndex, w },
+              "%",
+              formatter
+            );
           },
         },
         dataLabels: { enabled: false },
@@ -3057,14 +3167,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
         tooltip: {
           enabled: true,
+          shared: true,
+          intersect: false,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const value = series[seriesIndex][dataPointIndex];
-            const Estimated = getEstimatedLabel(w, dataPointIndex);
-            return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-                ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + Estimated : "N/A"
-            }
-              </div>`;
+            const formatter = (value) => {
+              if (value === null) return "N/A";
+              const Estimated = getEstimatedLabel(w, dataPointIndex);
+              return value.toFixed(2) + Estimated;
+            };
+
+            return createSharedTooltip(
+              { series, seriesIndex, dataPointIndex, w },
+              "",
+              formatter
+            );
           },
         },
         dataLabels: { enabled: false },
@@ -3152,14 +3268,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
         tooltip: {
           enabled: true,
+          shared: true,
+          intersect: false,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const value = series[seriesIndex][dataPointIndex];
-            const Estimated = getEstimatedLabel(w, dataPointIndex);
-            return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-                ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + Estimated : "N/A"
-            }
-              </div>`;
+            const formatter = (value) => {
+              if (value === null) return "N/A";
+              const Estimated = getEstimatedLabel(w, dataPointIndex);
+              return value.toFixed(2) + Estimated;
+            };
+
+            return createSharedTooltip(
+              { series, seriesIndex, dataPointIndex, w },
+              "",
+              formatter
+            );
           },
         },
         dataLabels: { enabled: false },
@@ -3272,14 +3394,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
         tooltip: {
           enabled: true,
+          shared: true,
+          intersect: false,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const value = series[seriesIndex][dataPointIndex];
-            const Estimated = getEstimatedLabel(w, dataPointIndex);
-            return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-                ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + Estimated : "N/A"
-            }
-              </div>`;
+            const formatter = (value) => {
+              if (value === null) return "N/A";
+              const Estimated = getEstimatedLabel(w, dataPointIndex);
+              return value.toFixed(2) + Estimated;
+            };
+
+            return createSharedTooltip(
+              { series, seriesIndex, dataPointIndex, w },
+              "",
+              formatter
+            );
           },
         },
         dataLabels: { enabled: false },
@@ -3394,14 +3522,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         dropShadow: { enabled: true, top: 0, left: 0, blur: 4, opacity: 0.1 },
         tooltip: {
           enabled: true,
+          shared: true,
+          intersect: false,
           custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const value = series[seriesIndex][dataPointIndex];
-            const Estimated = getEstimatedLabel(w, dataPointIndex);
-            return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
-          ${w.globals.seriesNames[seriesIndex]}: ${
-              value !== null ? value.toFixed(2) + "%" + Estimated : "N/A"
-            }
-        </div>`;
+            const formatter = (value) => {
+              if (value === null) return "N/A";
+              const Estimated = getEstimatedLabel(w, dataPointIndex);
+              return value.toFixed(2) + "%" + Estimated;
+            };
+
+            return createSharedTooltip(
+              { series, seriesIndex, dataPointIndex, w },
+              "%",
+              formatter
+            );
           },
         },
         dataLabels: { enabled: false },
