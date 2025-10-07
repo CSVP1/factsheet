@@ -1,4 +1,4 @@
-// Global Indices Chart with ApexCharts and Dashed Grid Lines
+// Global Indices Chart with ApexCharts and Smooth Animations
 document.addEventListener("DOMContentLoaded", function () {
   // Global Indices Chart
   const globalChartContainer = document.querySelector("#chart");
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
           return date.getFullYear().toString();
         });
 
-      const indices = data.data
+      const allIndices = data.data
         .filter((item) => item.table === "Base Adjusted Values")
         .map((item) => ({
           name: item.indexName || "Unknown Series",
@@ -79,16 +79,16 @@ document.addEventListener("DOMContentLoaded", function () {
           }));
         });
 
-      if (indices.length !== Object.keys(actualValuesMap).length) {
+      if (allIndices.length !== Object.keys(actualValuesMap).length) {
         console.warn(
           "Mismatch in number of series:",
-          indices.length,
+          allIndices.length,
           "indices vs",
           Object.keys(actualValuesMap).length,
           "actual values"
         );
       }
-      indices.forEach((index, i) => {
+      allIndices.forEach((index, i) => {
         if (!actualValuesMap[index.name]) {
           console.warn(`No actual values for series: ${index.name}`);
         }
@@ -116,7 +116,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const initialIndices = ["NASDAQ 100", "NIFTY IT", "BSE IT", "NIFTY"];
 
-      const series = indices.map((indexData, i) => ({
+      // Create all series with colors
+      const allSeries = allIndices.map((indexData, i) => ({
         name: indexData.name,
         data: indexData.data,
         color: colorPalette[i % colorPalette.length],
@@ -141,10 +142,15 @@ document.addEventListener("DOMContentLoaded", function () {
         },
       }));
 
-      console.log("Series prepared:", series);
+      // Filter to only initial series for rendering
+      const seriesToRender = allSeries.filter((s) =>
+        initialIndices.includes(s.name)
+      );
+
+      console.log("Series prepared:", seriesToRender);
 
       const chartOptions = {
-        series: series,
+        series: seriesToRender,
         chart: {
           type: "line",
           height: 350,
@@ -153,6 +159,16 @@ document.addEventListener("DOMContentLoaded", function () {
           },
           animations: {
             enabled: true,
+            easing: "easeinout",
+            speed: 800,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
           },
         },
         dataLabels: {
@@ -185,7 +201,6 @@ document.addEventListener("DOMContentLoaded", function () {
               dashArray: 0,
             },
           },
-
           grid: {
             show: false,
           },
@@ -222,24 +237,6 @@ document.addEventListener("DOMContentLoaded", function () {
             strokeDashArray: [6, 3],
             color: "#e8e8e8",
             strokeWidth: 1,
-            // show: true,
-            // borderColor: "rgba(120, 144, 156, 0.2)",
-            // strokeDashArray: 3,
-            // // strokeDashArray: [8, 4],
-            // color: "#e8e8e8",
-            // strokeWidth: 1,
-          },
-        },
-        tooltip: {
-          y: {
-            formatter: function (
-              value,
-              { series, seriesIndex, dataPointIndex, w }
-            ) {
-              return value !== null
-                ? FormatterWithZero.format(value) + "B"
-                : "N/A";
-            },
           },
         },
         tooltip: {
@@ -310,16 +307,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const chart = new ApexCharts(globalChartDiv, chartOptions);
       chart.render();
-      // Hide series that are not in initialIndices after chart is rendered
-      chart.w.globals.seriesNames.forEach((seriesName, index) => {
-        if (!initialIndices.includes(seriesName)) {
-          chart.hideSeries(seriesName);
-        }
-      });
 
       console.log("Chart initialized successfully");
 
-      series.forEach((seriesData, index) => {
+      // Create legend for all series
+      allSeries.forEach((seriesData, index) => {
         const legendItem = document.createElement("div");
         legendItem.style.display = "inline-block";
         legendItem.style.margin = "0 10px";
@@ -347,14 +339,23 @@ document.addEventListener("DOMContentLoaded", function () {
         colorIndicator.style.marginRight = "5px";
         colorIndicator.style.verticalAlign = "middle";
 
-        const toggleSeries = (useCheckboxState) => {
-          if (useCheckboxState) {
-            chart.showSeries(seriesData.name);
+        const toggleSeries = (shouldShow) => {
+          if (shouldShow) {
+            // Check if series exists in chart
+            const existingSeries = chart.w.config.series.find(
+              (s) => s.name === seriesData.name
+            );
+            if (!existingSeries) {
+              // Add series with animation
+              chart.appendSeries(seriesData);
+            } else {
+              chart.showSeries(seriesData.name);
+            }
           } else {
             chart.hideSeries(seriesData.name);
           }
           console.log(
-            `Toggled visibility for ${seriesData.name}: ${useCheckboxState}`
+            `Toggled visibility for ${seriesData.name}: ${shouldShow}`
           );
         };
 
@@ -384,7 +385,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// IRR Calculator with ApexCharts and Dashed Grid Lines
+// IRR Calculator with ApexCharts and Smooth Animations
 document.addEventListener("DOMContentLoaded", function () {
   $("#start_date, #end_date").datepicker({
     dateFormat: "mm/dd/yy",
@@ -519,14 +520,25 @@ document.addEventListener("DOMContentLoaded", function () {
           });
 
         const defaultIndices = ["NASDAQ 100", "NIFTY IT", "BSE IT", "NIFTY"];
-        let visibleIndices = [...new Set([index, ...defaultIndices])]; // Track currently visible indices
+        let visibleIndices = [...new Set([index, ...defaultIndices])];
+
+        const colorPalette = [
+          "#1E6AAE", // Dark Blue
+          "#2492E0", // Medium Blue
+          "#5AB9F7", // Light Blue
+          "#155081", // Dark Teal
+          "#599ac5", // Medium Teal
+          "#7ac8f8", // Light Sky Blue
+          "#5a5a5a", // Dark Gray
+          "#b0b0b0", // Medium Gray
+          "#e5e5e5", // Light Gray
+        ];
 
         // Get all available series
         const allSeries = data.data
           .filter((item) => item.table === "Base Adjusted Values")
           .map((indexData, i) => {
             const isSelectedIndex = indexData.indexName === index;
-            // Slice data to match displayLabels length
             const dataSlice = indexData.historicalData.slice(
               0,
               displayLabels.length
@@ -536,17 +548,7 @@ document.addEventListener("DOMContentLoaded", function () {
               data: dataSlice.map((item) => parseFloat(item.value) || 0),
               color: isSelectedIndex
                 ? "#1E6AAE"
-                : [
-                    "#1E6AAE", // Dark Blue
-                    "#2492E0", // Medium Blue
-                    "#5AB9F7", // Light Blue
-                    "#155081", // Dark Teal
-                    "#599ac5", // Medium Teal
-                    "#7ac8f8", // Light Sky Blue
-                    "#5a5a5a", // Dark Gray
-                    "#b0b0b0", // Medium Gray
-                    "#e5e5e5", // Light Gray
-                  ][i % 8],
+                : colorPalette[i % colorPalette.length],
               type: "line",
               lineWidth: isSelectedIndex ? 4 : 2,
               marker: {
@@ -555,15 +557,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 fillColors: [
                   isSelectedIndex
                     ? "#1E6AAE"
-                    : [
-                        "#5AB9F7", // Light Blue
-                        "#155081", // Dark Teal
-                        "#599ac5", // Medium Teal
-                        "#7ac8f8", // Light Sky Blue
-                        "#5a5a5a", // Dark Gray
-                        "#b0b0b0", // Medium Gray
-                        "#e5e5e5", // Light Gray
-                      ][i % 8],
+                    : colorPalette[i % colorPalette.length],
                 ],
                 hover: {
                   size: 6,
@@ -605,6 +599,16 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             animations: {
               enabled: true,
+              easing: "easeinout",
+              speed: 800,
+              animateGradually: {
+                enabled: true,
+                delay: 150,
+              },
+              dynamicAnimation: {
+                enabled: true,
+                speed: 350,
+              },
             },
           },
           dataLabels: {
