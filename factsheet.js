@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const commonOptions = {
     chart: { type: "line", height: 150, toolbar: { show: false } },
     xaxis: {
-      title: { text: "Year", offsetY: 5 },
+      title: { text: "", offsetY: 5 },
       labels: {
         show: true,
         style: {
@@ -1672,7 +1672,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             dashArray: 0,
           },
         },
-        title: { text: "Year", offsetY: 1 },
+        title: { text: "", offsetY: 1 },
         labels: {
           ...commonOptions.xaxis.labels,
           trim: false,
@@ -1798,7 +1798,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             dashArray: 0,
           },
         },
-        title: { text: "Year", offsetY: 1 },
+        title: { text: "", offsetY: 1 },
         labels: {
           ...commonOptions.xaxis.labels,
           hideOverlappingLabels: true,
@@ -2097,7 +2097,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "Year" },
+          title: { text: "" },
           labels: {
             show: true,
             style: {
@@ -2235,7 +2235,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "Year" },
+          title: { text: "" },
           labels: {
             show: true,
             style: {
@@ -2374,7 +2374,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "Year" },
+          title: { text: "" },
           labels: {
             show: true,
             style: {
@@ -2652,7 +2652,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "Year" },
+          title: { text: "" },
           labels: {
             show: true,
             style: {
@@ -2772,7 +2772,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "Year" },
+          title: { text: "" },
           labels: {
             show: true,
             style: {
@@ -2896,7 +2896,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "Year" },
+          title: { text: "" },
           labels: {
             show: true,
             style: {
@@ -3018,7 +3018,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "Year" },
+          title: { text: "" },
           labels: {
             show: true,
             style: {
@@ -3313,7 +3313,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "Year" },
+          title: { text: "" },
           labels: {
             style: {
               fontSize: "12px",
@@ -3435,7 +3435,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "Year" },
+          title: { text: "" },
           labels: {
             show: true,
             style: {
