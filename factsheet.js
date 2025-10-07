@@ -354,7 +354,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   const commonOptions = {
     chart: { type: "line", height: 150, toolbar: { show: false } },
     xaxis: {
-      title: { text: "", offsetY: 5 },
+      // title: { text: "_", offsetY: 5 },
+      title: { text: "_", style: { color: "transparent" } },
       labels: {
         show: true,
         style: {
@@ -1672,7 +1673,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             dashArray: 0,
           },
         },
-        title: { text: "", offsetY: 1 },
+        title: { text: "_", style: { color: "transparent" } },
         labels: {
           ...commonOptions.xaxis.labels,
           trim: false,
@@ -1798,7 +1799,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             dashArray: 0,
           },
         },
-        title: { text: "", offsetY: 1 },
+        title: { text: "_", style: { color: "transparent" } },
         labels: {
           ...commonOptions.xaxis.labels,
           hideOverlappingLabels: true,
@@ -2097,7 +2098,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           labels: {
             show: true,
             style: {
@@ -2127,7 +2128,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         yaxis: {
           show: true,
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           axisBorder: {
             show: true,
             color: "#ABCAE9",
@@ -2235,7 +2236,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           labels: {
             show: true,
             style: {
@@ -2265,7 +2266,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         yaxis: {
           show: true,
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           axisBorder: {
             show: true,
             color: "#ABCAE9",
@@ -2374,7 +2375,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           labels: {
             show: true,
             style: {
@@ -2404,7 +2405,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         yaxis: {
           show: true,
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           axisBorder: {
             show: true,
             color: "#ABCAE9",
@@ -2652,7 +2653,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           labels: {
             show: true,
             style: {
@@ -2772,7 +2773,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           labels: {
             show: true,
             style: {
@@ -2896,7 +2897,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           labels: {
             show: true,
             style: {
@@ -3018,7 +3019,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           labels: {
             show: true,
             style: {
@@ -3313,7 +3314,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           labels: {
             style: {
               fontSize: "12px",
@@ -3435,7 +3436,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         xaxis: {
-          title: { text: "" },
+          title: { text: "_", style: { color: "transparent" } },
           labels: {
             show: true,
             style: {
