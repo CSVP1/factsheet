@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const globalChartContainer = document.querySelector("#chart");
   if (!globalChartContainer) {
     console.error(
-      'Chart container not found. Ensure a div with id="chart" exists in the HTML.'
+      'Chart  container not found. Ensure a div with id="chart" exists in the HTML.'
     );
     return;
   }
