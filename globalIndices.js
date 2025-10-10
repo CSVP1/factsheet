@@ -449,6 +449,23 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    // Validate dates
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+    const minDate = new Date("01/01/2014");
+
+    // Check if investment date is greater than 01-01-2014
+    if (startDateObj <= minDate) {
+      alert("Investment date must be greater than 01/01/2014.");
+      return;
+    }
+
+    // Check if exit date is greater than investment date
+    if (endDateObj <= startDateObj) {
+      alert("Exit date must be greater than the investment date.");
+      return;
+    }
+
     const loader = document.createElement("div");
     loader.className = "loader";
     loader.style.cssText = "display: block; text-align: center; padding: 20px;";
