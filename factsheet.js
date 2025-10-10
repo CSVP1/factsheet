@@ -2803,7 +2803,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         yaxis: {
           show: true,
-          title: { text: "India" },
+          title: { text: "" },
           min: 0,
           max: 15,
           axisBorder: {
