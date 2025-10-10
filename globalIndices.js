@@ -520,7 +520,26 @@ document.addEventListener("DOMContentLoaded", function () {
           });
 
         const defaultIndices = ["NASDAQ 100", "NIFTY IT", "BSE IT", "NIFTY"];
-        let visibleIndices = [...new Set([index, ...defaultIndices])];
+
+        // Add the invested index to defaultIndices if not already present
+        if (!defaultIndices.includes(index)) {
+          // TODO: Add more indices to defaultIndices if required
+          // if index is DJX, then add DJIA to defaultIndices
+          // if index is BOM, then add SENSEX to defaultIndices
+          // if index is SP, then add S&P 500 to defaultIndices
+          // else add the index to defaultIndices
+          if (index.split(":")[0].replace("INDEX", "") === "DJX") {
+            defaultIndices.push("DJIA");
+          } else if (index.split(":")[0].replace("INDEX", "") === "BOM") {
+            defaultIndices.push("SENSEX");
+          } else if (index.split(":")[0].replace("INDEX", "") === "SP") {
+            defaultIndices.push("S&P 500");
+          } else {
+            defaultIndices.push(index.split(":")[0].replace("INDEX", ""));
+          }
+        }
+
+        let visibleIndices = [...defaultIndices];
 
         const colorPalette = [
           "#1E6AAE", // Dark Blue
@@ -709,7 +728,7 @@ document.addEventListener("DOMContentLoaded", function () {
                       <span style="flex: 1;">${seriesName}:</span>
                       <span style="font-weight: bold;">${Math.round(
                         value
-                      )}%</span>
+                      )}</span>
                     </div>
                   `;
                 }
