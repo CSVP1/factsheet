@@ -387,10 +387,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // IRR Calculator with ApexCharts and Smooth Animations
 document.addEventListener("DOMContentLoaded", function () {
+  function getLastDayOfPreviousQuarter(currentDate) {
+    const date = new Date(currentDate);
+    const currentMonth = date.getMonth();
+    const currentYear = date.getFullYear();
+    const currentQuarter = Math.floor(currentMonth / 3) + 1;
+    let previousQuarter, previousQuarterYear;
+
+    if (currentQuarter === 1) {
+      previousQuarter = 4;
+      previousQuarterYear = currentYear - 1;
+    } else {
+      previousQuarter = currentQuarter - 1;
+      previousQuarterYear = currentYear;
+    }
+
+    let lastDate;
+    if (previousQuarter === 1) {
+      lastDate = new Date(previousQuarterYear, 2, 31); // March 31
+    } else if (previousQuarter === 2) {
+      lastDate = new Date(previousQuarterYear, 5, 30); // June 30
+    } else if (previousQuarter === 3) {
+      lastDate = new Date(previousQuarterYear, 8, 30); // September 30
+    } else {
+      lastDate = new Date(previousQuarterYear, 11, 31); // December 31
+    }
+
+    return lastDate;
+  }
+
+  // Determine endDate: use specific date if required, else last day of previous quarter
+  const endDate = getLastDayOfPreviousQuarter(new Date());
   $("#start_date, #end_date").datepicker({
     dateFormat: "mm/dd/yy",
     autoHide: true,
-    endDate: new Date(),
+    endDate: endDate, // if required validation till specific date then new Date("2025-09-30") else new Date() which work to get the current as Last date
     changeMonth: true,
     changeYear: true,
   });
@@ -455,13 +486,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const minDate = new Date("01/01/2014");
 
     // Check if investment date is greater than 01-01-2014
-    if (startDateObj <= minDate) {
+    if (startDateObj < minDate) {
       alert("Investment date must be greater than 01/01/2014.");
       return;
     }
 
     // Check if exit date is greater than investment date
-    if (endDateObj <= startDateObj) {
+    if (endDateObj < startDateObj) {
       alert("Exit date must be greater than the investment date.");
       return;
     }
