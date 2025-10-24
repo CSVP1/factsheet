@@ -200,17 +200,19 @@ document.addEventListener("DOMContentLoaded", async function () {
         }));
   };
 
-  // Helper: Create series data for merchandise trade (Exports, Imports, Surplus/Deficit)
+  // Helper: Create series data for merchandise trade (Exports, Imports, Deficit)
   const createMerchandiseSeries = (sheet, years) => {
     const exportsData = years.map((year) => sheet[year]?.Exports || null);
     const importsData = years.map((year) => sheet[year]?.Imports || null);
-    const surplusDeficitData = years.map(
-      (year) => sheet[year]?.["Surplus/Deficit"] || null
-    );
+    const deficitData = years.map((year) => {
+      const value = sheet[year]?.["Surplus/Deficit"] || null;
+      // Remove negative sign from deficit data
+      return value !== null ? Math.abs(value) : null;
+    });
     return [
-      { name: "Exports", data: exportsData },
       { name: "Imports", data: importsData },
-      { name: "Surplus/Deficit", data: surplusDeficitData },
+      { name: "Exports", data: exportsData },
+      { name: "Deficit", data: deficitData },
     ];
   };
 
@@ -1486,6 +1488,21 @@ document.addEventListener("DOMContentLoaded", async function () {
           return tooltipContent;
         },
       },
+      dataLabels: {
+        enabled: true,
+        formatter: function (val, opts) {
+          const year = getAnnotationYear(
+            merchandiseYears,
+            merchandiseTradeSheet
+          );
+          return opts.w.globals.labels[opts.dataPointIndex] === year
+            ? val !== null
+              ? val.toFixed(2) + "B"
+              : "N/A"
+            : "";
+        },
+        style: { fontSize: "12px", colors: ["#1E6AAE"] },
+      },
       annotations: {
         points: (() => {
           const year =
@@ -1540,7 +1557,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       chart: {
         ...commonOptions.chart,
         id: "agricultureChart",
-        type: "bar",
+        type: "line",
         height: 220,
         animations: {
           enabled: true,
@@ -1586,25 +1603,16 @@ document.addEventListener("DOMContentLoaded", async function () {
       },
       series: seriesData.shareAIS,
       colors: ["#004679", "#0082e0", "#5f5f5f"],
-      plotOptions: {
-        bar: { horizontal: false, columnWidth: "55%", borderRadius: 2 },
-      },
-      fill: {
-        type: "gradient",
-        gradient: {
-          type: "vertical",
-          shadeIntensity: 1,
-          inverseColors: true,
-          opacityFrom: 1,
-          opacityTo: 1,
-          gradientToColors: ["#2c82bf", "#2da0f9", "#8b8b8b"],
-          stops: [0, 100],
-        },
-      },
       stroke: {
         curve: "straight",
-        width: 1,
-        colors: ["#2c82bf", "#2da0f9", "#8b8b8b"],
+        width: 2,
+        colors: ["#004679", "#0082e0", "#5f5f5f"],
+      },
+      markers: {
+        size: 4,
+        strokeWidth: 2,
+        strokeColors: "#ffffff",
+        hover: { size: 6, sizeOffset: 3 },
       },
       annotations: {
         points: (() => {
@@ -3010,7 +3018,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       "agricultureChart",
       {
         chart: {
-          type: "bar",
+          type: "line",
           height: 400,
           toolbar: { show: false },
           id: "detailedAgricultureChart",
@@ -3065,9 +3073,6 @@ document.addEventListener("DOMContentLoaded", async function () {
           },
         },
         colors: ["#1E6AAE", "#0077B6", "#65a30d"],
-        plotOptions: {
-          bar: { horizontal: false, columnWidth: "55%", borderRadius: 2 },
-        },
         markers: {
           size: 4,
           strokeWidth: 2,
