@@ -542,18 +542,65 @@ document.addEventListener("DOMContentLoaded", function () {
         const baseAdjusted = data.data.find(
           (item) => item.table === "Base Adjusted Values"
         );
-        const labels = baseAdjusted.historicalData.map((item) => {
-          const dateParts = item.date.split("-");
-          return dateParts[2];
-        });
-        // Find the exit year from the end date input
+        
+        // Parse the exit date from the input (format: mm/dd/yyyy)
         const endDateInput = document.getElementById("end_date").value;
-        const exitYear = endDateInput.split("/")[2]; // mm/dd/yyyy
-        // Find the first index of the exit year in labels
-        let endIdx = labels.findIndex((year) => year === exitYear);
-        if (endIdx === -1) endIdx = labels.length - 1; // fallback: use all
-        // Slice labels and datasets up to and including the first exit year
-        const displayLabels = labels.slice(0, endIdx + 1);
+        const [exitMonth, exitDay, exitYear] = endDateInput.split("/").map(Number);
+        const exitDate = new Date(exitYear, exitMonth - 1, exitDay); // month is 0-indexed
+        
+        // Find the last data point that is <= the exit date
+        let endIdx = -1;
+        baseAdjusted.historicalData.forEach((item, index) => {
+          // Parse the item date - handle both string dates and numeric dates
+          let itemDate;
+          if (typeof item.date === 'string') {
+            // Handle string dates (format: YYYY-MM-DD or similar)
+            const dateParts = item.date.split("-");
+            if (dateParts.length >= 3) {
+              itemDate = new Date(
+                parseInt(dateParts[0]),
+                parseInt(dateParts[1]) - 1,
+                parseInt(dateParts[2])
+              );
+            } else {
+              // Fallback: try parsing as-is
+              itemDate = new Date(item.date);
+            }
+          } else if (typeof item.date === 'number') {
+            // Handle numeric dates (Excel serial date format)
+            itemDate = new Date((item.date - 25569) * 86400 * 1000);
+          } else {
+            itemDate = new Date(item.date);
+          }
+          
+          // Check if this date is <= exit date
+          if (itemDate <= exitDate) {
+            endIdx = index;
+          }
+        });
+        
+        // If no match found, use all data
+        if (endIdx === -1) {
+          endIdx = baseAdjusted.historicalData.length - 1;
+        }
+        
+        // Create labels and slice to the correct end index
+        const labels = baseAdjusted.historicalData.slice(0, endIdx + 1).map((item) => {
+          const dateParts = item.date.toString().split("-");
+          if (dateParts.length >= 3) {
+            return dateParts[2];
+          }
+          // Fallback: extract year from date
+          let itemDate;
+          if (typeof item.date === 'number') {
+            itemDate = new Date((item.date - 25569) * 86400 * 1000);
+          } else {
+            itemDate = new Date(item.date);
+          }
+          return itemDate.getFullYear().toString();
+        });
+        
+        const displayLabels = labels;
 
         const actualValuesMap = {};
         data.data
@@ -608,7 +655,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const isSelectedIndex = indexData.indexName === index;
             const dataSlice = indexData.historicalData.slice(
               0,
-              displayLabels.length
+              endIdx + 1
             );
             return {
               name: indexData.indexName,
