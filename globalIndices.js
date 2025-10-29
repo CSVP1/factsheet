@@ -542,18 +542,19 @@ document.addEventListener("DOMContentLoaded", function () {
         const baseAdjusted = data.data.find(
           (item) => item.table === "Base Adjusted Values"
         );
-        
+
         // Parse the exit date from the input (format: mm/dd/yyyy)
         const endDateInput = document.getElementById("end_date").value;
-        const [exitMonth, exitDay, exitYear] = endDateInput.split("/").map(Number);
+        const [exitMonth, exitDay, exitYear] = endDateInput
+          .split("/")
+          .map(Number);
         const exitDate = new Date(exitYear, exitMonth - 1, exitDay); // month is 0-indexed
-        
         // Find the last data point that is <= the exit date
         let endIdx = -1;
         baseAdjusted.historicalData.forEach((item, index) => {
           // Parse the item date - handle both string dates and numeric dates
           let itemDate;
-          if (typeof item.date === 'string') {
+          if (typeof item.date === "string") {
             // Handle string dates (format: YYYY-MM-DD or similar)
             const dateParts = item.date.split("-");
             if (dateParts.length >= 3) {
@@ -566,40 +567,42 @@ document.addEventListener("DOMContentLoaded", function () {
               // Fallback: try parsing as-is
               itemDate = new Date(item.date);
             }
-          } else if (typeof item.date === 'number') {
+          } else if (typeof item.date === "number") {
             // Handle numeric dates (Excel serial date format)
             itemDate = new Date((item.date - 25569) * 86400 * 1000);
           } else {
             itemDate = new Date(item.date);
           }
-          
+
           // Check if this date is <= exit date
           if (itemDate <= exitDate) {
             endIdx = index;
           }
         });
-        
+
         // If no match found, use all data
         if (endIdx === -1) {
           endIdx = baseAdjusted.historicalData.length - 1;
         }
-        
+
         // Create labels and slice to the correct end index
-        const labels = baseAdjusted.historicalData.slice(0, endIdx + 1).map((item) => {
-          const dateParts = item.date.toString().split("-");
-          if (dateParts.length >= 3) {
-            return dateParts[2];
-          }
-          // Fallback: extract year from date
-          let itemDate;
-          if (typeof item.date === 'number') {
-            itemDate = new Date((item.date - 25569) * 86400 * 1000);
-          } else {
-            itemDate = new Date(item.date);
-          }
-          return itemDate.getFullYear().toString();
-        });
-        
+        const labels = baseAdjusted.historicalData
+          .slice(0, endIdx + 1)
+          .map((item) => {
+            const dateParts = item.date.toString().split("-");
+            if (dateParts.length >= 3) {
+              return dateParts[2];
+            }
+            // Fallback: extract year from date
+            let itemDate;
+            if (typeof item.date === "number") {
+              itemDate = new Date((item.date - 25569) * 86400 * 1000);
+            } else {
+              itemDate = new Date(item.date);
+            }
+            return itemDate.getFullYear().toString();
+          });
+
         const displayLabels = labels;
 
         const actualValuesMap = {};
@@ -648,6 +651,44 @@ document.addEventListener("DOMContentLoaded", function () {
           "#e5e5e5", // Light Gray
         ];
 
+        function yearDifference(date1, date2) {
+          const [day1, month1, year1] = date1.split("/").map(Number);
+          const [day2, month2, year2] = date2.split("/").map(Number);
+
+          const d1 = new Date(year1, month1 - 1, day1);
+          const d2 = new Date(year2, month2 - 1, day2);
+
+          let years = year2 - year1;
+          let months = month2 - month1;
+          let days = day2 - day1;
+
+          // Adjust for negative days
+          if (days < 0) {
+            months -= 1;
+            const prevMonth = new Date(year2, month2 - 1, 0); // last day of previous month
+            days += prevMonth.getDate();
+          }
+
+          // Adjust for negative months
+          if (months < 0) {
+            years -= 1;
+            months += 12;
+          }
+
+          // Calculate decimal year difference (approx)
+          const totalYears = years + months / 12 + days / 365;
+
+          return {
+            years,
+            months,
+            days,
+            yearDifferenceCeil: Math.ceil(totalYears),
+          };
+        }
+
+        // Example usage
+        console.log(yearDifference("12/01/2014", "20/10/2025"));
+
         // Get all available series
         const allSeries = data.data
           .filter((item) => item.table === "Base Adjusted Values")
@@ -655,7 +696,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const isSelectedIndex = indexData.indexName === index;
             const dataSlice = indexData.historicalData.slice(
               0,
-              endIdx + 1
+              yearDifference(data?.input?.start_date, data?.input?.end_date)
+                .yearDifferenceCeil + 1
             );
             return {
               name: indexData.indexName,
