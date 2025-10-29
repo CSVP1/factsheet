@@ -351,6 +351,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   updateInfoDiv("annualReturnsChart", annualReturnsSheet, "%");
   updateInfoDiv("detailedMedianAge", medianAgeSheet, "years");
   updateInfoDiv("detailedInflationRate", inflationRateSheet, "%");
+  updateInfoDiv("Inflationfacechart", inflationRateSheet, "%");
 
   // Common ApexCharts options for the main charts (ensures consistent look and feel)
   const commonOptions = {
@@ -403,7 +404,8 @@ document.addEventListener("DOMContentLoaded", async function () {
           w.config.chart.id.includes("realGDPGrowth") ||
           w.config.chart.id.includes("unemploymentRateChart") ||
           w.config.chart.id.includes("governmentBondChart") ||
-          w.config.chart.id.includes("annualReturnsChart")
+          w.config.chart.id.includes("annualReturnsChart") ||
+          w.config.chart.id.includes("Inflationfacechart")
             ? "%"
             : w.config.chart.id.includes("populationChart")
             ? "M"
@@ -513,7 +515,8 @@ document.addEventListener("DOMContentLoaded", async function () {
           w.config.chart.id.includes("realGDPGrowth") ||
           w.config.chart.id.includes("unemploymentRateChart") ||
           w.config.chart.id.includes("governmentBondChart") ||
-          w.config.chart.id.includes("annualReturnsChart")
+          w.config.chart.id.includes("annualReturnsChart") ||
+          w.config.chart.id.includes("Inflationfacechart")
             ? "%"
             : w.config.chart.id.includes("populationChart")
             ? "M"
@@ -1223,6 +1226,124 @@ document.addEventListener("DOMContentLoaded", async function () {
       : "Data not available"
   );
 
+  renderChart(
+    "inflationchart",
+    {
+      ...commonOptions,
+      chart: {
+        ...commonOptions.chart,
+        id: "detailedInflationRate",
+      },
+      xaxis: {
+        title: { text: "_", style: { color: "transparent" } },
+        labels: {
+          show: true,
+          style: {
+            fontSize: "12px",
+            fontFamily: "Poppins",
+            fontWeight: 400,
+            colors: ["#2E2E2E"],
+          },
+        },
+        axisBorder: {
+          show: true,
+          color: "#ABCAE9",
+        },
+        axisTicks: { show: true },
+        categories: inflationYears,
+        tooltip: {
+          enabled: true,
+        },
+        crosshairs: {
+          show: true,
+          stroke: {
+            color: "#E5E5E5",
+            width: 1,
+            dashArray: 0,
+          },
+        },
+      },
+      yaxis: {
+        show: true,
+        title: { text: "India" },
+        min: 0,
+        max: 20,
+        axisBorder: {
+          show: true,
+          color: "#ABCAE9",
+        },
+        labels: {
+          formatter: (val) => `${Math.round(val)}%`,
+          show: false,
+          style: {
+            fontSize: "12px",
+            fontFamily: "Poppins",
+            fontWeight: 400,
+            colors: ["#2E2E2E"],
+          },
+        },
+      },
+      series: seriesData.inflationRate,
+      markers: {
+        size: 4,
+        strokeWidth: 2,
+        strokeColors: "#ffffff",
+        hover: { size: 6, sizeOffset: 3 },
+      },
+      tooltip: {
+        enabled: true,
+        shared: true,
+        intersect: false,
+        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          const formatter = (value) => {
+            if (value === null) return "N/A";
+            const Estimated = getEstimatedLabel(w, dataPointIndex);
+            return value.toFixed(2) + "%" + Estimated;
+          };
+
+          return createSharedTooltip(
+            { series, seriesIndex, dataPointIndex, w },
+            "%",
+            formatter
+          );
+        },
+      },
+      dataLabels: { enabled: false },
+      annotations: {
+        points: (() => {
+          const year = getAnnotationYear(years, inflationRateSheet);
+          if (!year) return [];
+          return [
+            {
+              x: year,
+              y: inflationRateSheet["India"]?.[year] || null,
+              marker: {
+                size: 6,
+                fillColor: "#1E6AAE",
+                strokeColor: "#fff",
+                radius: 2,
+              },
+              label: {
+                text: `${(inflationRateSheet["India"]?.[year] || 0).toFixed(
+                  2
+                )}%`,
+                position: "right", // Changed from "top" to "right"
+                offsetX: 25, // Added to position the label slightly to the right of the point
+                offsetY: -10,
+                style: {
+                  color: "#1E6AAE",
+                  background: "#fff",
+                  padding: "4px",
+                  borderRadius: "4px",
+                },
+              },
+            },
+          ];
+        })(),
+      },
+    },
+    "detailedInflationRate"
+  );
   // Update for governmentBondChart: add % to y-axis values
   // Add null data points at start and end for visual padding
   const paddedBondYears = ["", ...bondYears, " "];
