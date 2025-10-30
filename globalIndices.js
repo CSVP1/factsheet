@@ -651,21 +651,60 @@ document.addEventListener("DOMContentLoaded", function () {
           "#e5e5e5", // Light Gray
         ];
 
-        function yearDifference(date1, date2) {
-          const [day1, month1, year1] = date1.split("/").map(Number);
-          const [day2, month2, year2] = date2.split("/").map(Number);
+        // function yearDifference(date1, date2) {
+        //   const [day1, month1, year1] = date1.split("/").map(Number);
+        //   const [day2, month2, year2] = date2.split("/").map(Number);
 
-          const d1 = new Date(year1, month1 - 1, day1);
-          const d2 = new Date(year2, month2 - 1, day2);
+        //   const d1 = new Date(year1, month1 - 1, day1);
+        //   const d2 = new Date(year2, month2 - 1, day2);
 
-          let years = year2 - year1;
-          let months = month2 - month1;
-          let days = day2 - day1;
+        //   let years = year2 - year1;
+        //   let months = month2 - month1;
+        //   let days = day2 - day1;
+
+        //   // Adjust for negative days
+        //   if (days < 0) {
+        //     months -= 1;
+        //     const prevMonth = new Date(year2, month2 - 1, 0); // last day of previous month
+        //     days += prevMonth.getDate();
+        //   }
+
+        //   // Adjust for negative months
+        //   if (months < 0) {
+        //     years -= 1;
+        //     months += 12;
+        //   }
+
+        //   // Calculate decimal year difference (approx)
+        //   const totalYears = years + months / 12 + days / 365;
+
+        //   return {
+        //     years,
+        //     months,
+        //     days,
+        //     yearDifferenceCeil: Math.ceil(totalYears),
+        //   };
+        // }
+        function yearDifference(startDate, endDate) {
+          // Parse the input dates (expected format: MM/DD/YYYY)
+          const [startMonth, startDay, startYear] = startDate
+            .split("/")
+            .map(Number);
+          const [endMonth, endDay, endYear] = endDate.split("/").map(Number);
+
+          // Create Date objects
+          const d1 = new Date(startYear, startMonth - 1, startDay);
+          const d2 = new Date(endYear, endMonth - 1, endDay);
+
+          // Calculate raw differences
+          let years = endYear - startYear;
+          let months = endMonth - startMonth;
+          let days = endDay - startDay;
 
           // Adjust for negative days
           if (days < 0) {
             months -= 1;
-            const prevMonth = new Date(year2, month2 - 1, 0); // last day of previous month
+            const prevMonth = new Date(endYear, endMonth - 1, 0); // last day of previous month
             days += prevMonth.getDate();
           }
 
@@ -675,19 +714,28 @@ document.addEventListener("DOMContentLoaded", function () {
             months += 12;
           }
 
-          // Calculate decimal year difference (approx)
-          const totalYears = years + months / 12 + days / 365;
+          // Calculate total difference in milliseconds
+          const diffMs = d2 - d1;
+          const diffDays = diffMs / (1000 * 60 * 60 * 24);
+          const totalYears = diffDays / 365.25; // average year length including leap years
 
           return {
             years,
             months,
             days,
-            yearDifferenceCeil: Math.ceil(totalYears),
+            yearDifferenceCeil: +totalYears.toFixed(2),
           };
         }
 
         // Example usage
-        console.log(yearDifference("12/01/2014", "20/10/2025"));
+        console.log(
+          "hryyyy=>",
+          data?.input?.start_date,
+          Math.ceil(
+            yearDifference(data?.input?.start_date, data?.input?.end_date)
+              .yearDifferenceCeil
+          ) + 1
+        );
 
         // Get all available series
         const allSeries = data.data
@@ -696,8 +744,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const isSelectedIndex = indexData.indexName === index;
             const dataSlice = indexData.historicalData.slice(
               0,
-              yearDifference(data?.input?.start_date, data?.input?.end_date)
-                .yearDifferenceCeil + 1
+              Math.ceil(
+                yearDifference(data?.input?.start_date, data?.input?.end_date)
+                  .yearDifferenceCeil
+              ) + 1
             );
             return {
               name: indexData.indexName,
