@@ -1285,10 +1285,18 @@ document.addEventListener("DOMContentLoaded", async function () {
       },
       series: seriesData.inflationRate,
       markers: {
-        size: 4,
-        strokeWidth: 2,
-        strokeColors: "#ffffff",
-        hover: { size: 6, sizeOffset: 3 },
+        size: 0,
+        strokeWidth: 0,
+        hover: { size: 0 },
+        discrete: [
+          {
+            seriesIndex: 0,
+            dataPointIndex: unemploymentYears.indexOf("2025"),
+            fillColor: "#1E6AAE",
+            strokeColor: "#ffffff",
+            size: 6,
+          },
+        ],
       },
       tooltip: {
         enabled: true,
