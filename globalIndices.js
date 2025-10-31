@@ -586,26 +586,53 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Create labels and slice to the correct end index
+        // const labels = baseAdjusted.historicalData
+        //   .slice(0, endIdx + 1)
+        //   .map((item) => {
+        //     const dateParts = item.date.toString().split("-");
+        //     console.log("dateParts===>", item.date);
+        //     if (dateParts.length >= 3) {
+        //       return dateParts[2];
+        //     }
+
+        //     // Fallback: extract year from date
+        //     let itemDate;
+        //     if (typeof item.date === "number") {
+        //       itemDate = new Date((item.date - 25569) * 86400 * 1000);
+        //     } else {
+        //       itemDate = new Date(item.date);
+        //     }
+        //     return itemDate;
+        //   });
         const labels = baseAdjusted.historicalData
           .slice(0, endIdx + 1)
           .map((item) => {
-            const dateParts = item.date.toString().split("-");
-            if (dateParts.length >= 3) {
-              return dateParts[2];
+            const dateStr = item.date?.toString()?.trim();
+            console.log("dateParts===>", dateStr);
+
+            // Handle formats like "1-Dec-2014"
+            const parts = dateStr.split("-");
+            if (parts.length === 3) {
+              // e.g. ["1", "Dec", "2014"] → "Dec-2014"
+              return `${parts[1]}-${parts[2]}`;
             }
-            // Fallback: extract year from date
-            let itemDate;
+
+            // Fallback: if date is numeric or another format
+            let dateObj;
             if (typeof item.date === "number") {
-              itemDate = new Date((item.date - 25569) * 86400 * 1000);
+              // Excel date serial → JS Date
+              dateObj = new Date((item.date - 25569) * 86400 * 1000);
             } else {
-              itemDate = new Date(item.date);
+              dateObj = new Date(item.date);
             }
-            return itemDate;
+
+            // Format as "Mon-YYYY"
+            const month = dateObj.toLocaleString("en-US", { month: "short" });
+            const year = dateObj.getFullYear();
+            return `${month}-${year}`;
           });
 
-        const displayLabels = labels.map((item) =>
-          new Date(item).toLocaleDateString("en-GB")
-        );
+        const displayLabels = labels;
 
         const actualValuesMap = {};
         data.data
@@ -827,9 +854,7 @@ document.addEventListener("DOMContentLoaded", function () {
             width: 2,
           },
           xaxis: {
-            categories: displayLabels.map((item) =>
-              new Date(item).getFullYear().toString()
-            ),
+            categories: displayLabels,
             labels: {
               style: {
                 fontSize: "12px",
