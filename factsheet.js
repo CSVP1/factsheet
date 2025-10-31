@@ -1292,20 +1292,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       },
       tooltip: {
         enabled: true,
-        shared: true,
-        intersect: false,
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-          const formatter = (value) => {
-            if (value === null) return "N/A";
-            const Estimated = getEstimatedLabel(w, dataPointIndex);
-            return value.toFixed(2) + "%" + Estimated;
-          };
-
-          return createSharedTooltip(
-            { series, seriesIndex, dataPointIndex, w },
-            "%",
-            formatter
-          );
+          const value = series[seriesIndex][dataPointIndex];
+          const year = w.globals.categoryLabels[dataPointIndex];
+          const isEstimated = parseInt(year) >= 2025 ? " (E)" : "";
+          return `<div style="padding: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 4px;">
+            ${w.globals.seriesNames[seriesIndex]}: ${
+            value !== null ? value.toFixed(2) + "%" + isEstimated : "N/A"
+          }
+          </div>`;
         },
       },
       dataLabels: { enabled: false },
@@ -1734,6 +1729,43 @@ document.addEventListener("DOMContentLoaded", async function () {
         strokeWidth: 2,
         strokeColors: "#ffffff",
         hover: { size: 6, sizeOffset: 3 },
+      },
+      tooltip: {
+        enabled: true,
+        shared: true,
+        intersect: false,
+        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          const year = w.globals.categoryLabels[dataPointIndex];
+          const isEstimated = parseInt(year) >= 2025 ? " (E)" : "";
+
+          // Create header with year
+          let tooltipContent = `
+            <div style="background:rgb(254, 254, 254); color: white; padding: 12px 16px; border-radius: 8px; font-size: 12px; min-width: 200px;">
+                <div style="margin-bottom: 8px; font-weight: bold; border-bottom: 1px solid rgba(100, 97, 97, 0.3); padding-bottom: 4px; color: #333;">
+                 ${year}${isEstimated}
+              </div>
+          `;
+
+          // Add all series data for this year
+          series.forEach((seriesData, index) => {
+            const value = seriesData[dataPointIndex];
+            const seriesName = w.globals.seriesNames[index];
+            const color = w.globals.colors[index];
+
+            tooltipContent += `
+               <div style="margin-bottom: 4px; display: flex; align-items: center; color: #333; ">
+                    <span style="color: ${color}; font-weight: bold; margin-right: 8px;">●</span>
+                    <span style="flex: 1;">${seriesName}:</span>
+                 <span style="font-weight: bold;">${
+                   value !== null ? Formatter.format(value) + "B" : "N/A"
+                 }</span>
+              </div>
+            `;
+          });
+
+          tooltipContent += `</div>`;
+          return tooltipContent;
+        },
       },
       annotations: {
         points: (() => {
