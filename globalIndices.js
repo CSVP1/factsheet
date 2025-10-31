@@ -600,10 +600,12 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
               itemDate = new Date(item.date);
             }
-            return itemDate.getFullYear().toString();
+            return itemDate;
           });
 
-        const displayLabels = labels;
+        const displayLabels = labels.map((item) =>
+          new Date(item).toLocaleDateString("en-GB")
+        );
 
         const actualValuesMap = {};
         data.data
@@ -825,7 +827,9 @@ document.addEventListener("DOMContentLoaded", function () {
             width: 2,
           },
           xaxis: {
-            categories: displayLabels,
+            categories: displayLabels.map((item) =>
+              new Date(item).getFullYear().toString()
+            ),
             labels: {
               style: {
                 fontSize: "12px",
