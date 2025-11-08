@@ -1765,7 +1765,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     <span style="color: ${color}; font-weight: bold; margin-right: 8px;">●</span>
                     <span style="flex: 1;">${seriesName}:</span>
                  <span style="font-weight: bold;">${
-                   value !== null ? Formatter.format(value) + "B" : "N/A"
+                   value !== null ? Formatter.format(value) + "%" : "N/A"
                  }</span>
               </div>
             `;
