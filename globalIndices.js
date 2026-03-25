@@ -543,6 +543,13 @@ document.addEventListener("DOMContentLoaded", function () {
           (item) => item.table === "Base Adjusted Values"
         );
 
+        const irrMap = {};
+data.data
+  .filter((item) => item.table === "Base Adjusted Values")
+  .forEach((item) => {
+    irrMap[item.indexName] = item.irrValue;
+  });
+
         // Parse the exit date from the input (format: mm/dd/yyyy)
         const endDateInput = document.getElementById("end_date").value;
         const [exitMonth, exitDay, exitYear] = endDateInput
@@ -942,9 +949,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div style="margin-bottom: 4px; display: flex; align-items: center; color: #333;">
                       <span style="color: ${color}; font-weight: bold; margin-right: 8px;">●</span>
                       <span style="flex: 1;">${seriesName}:</span>
-                      <span style="font-weight: bold;">${Math.round(
-                        value
-                      )}</span>
+                      <span style="font-weight: bold;">${Math.round(value)} (${irrMap[seriesName] ? irrMap[seriesName] + '%' : '-'})</span>
                     </div>
                   `;
                 }
