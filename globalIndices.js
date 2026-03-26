@@ -949,7 +949,10 @@ data.data
                     <div style="margin-bottom: 4px; display: flex; align-items: center; color: #333;">
                       <span style="color: ${color}; font-weight: bold; margin-right: 8px;">●</span>
                       <span style="flex: 1;">${seriesName}:</span>
-                      <span style="font-weight: bold;">${Math.round(value)} (${irrMap[seriesName] ? irrMap[seriesName] + '%' : '-'})</span>
+                      <span style="font-weight: bold;">${dataPointIndex === seriesData.length - 1
+  ? `${Math.round(value)} (${irrMap[seriesName] ? irrMap[seriesName] + '%' : '-'})`
+  : Math.round(value)
+}</span>
                     </div>
                   `;
                 }
